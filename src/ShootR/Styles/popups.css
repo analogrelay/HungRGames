@@ -1,0 +1,212 @@
+﻿#popUpHolder {
+    position: absolute;
+    display: none;
+    z-index: 100001;
+    font-family: 'SegoeUISemibold';
+}
+
+#levelNotification {
+    position: absolute;
+    color: white;
+    top: -234px;
+    left: 50px;       
+    width:150px;
+    height:234px;
+    background-image:url('/Images/Page/badge_LEVEL.png');
+    background-repeat:no-repeat;
+}
+
+#CurrentLevel_Notification {
+    position:relative;
+    text-align:center;
+    top:90px;
+    font-size: 70px; 
+}
+
+#Notification {
+    z-index: 100001;
+    border: 1px double white;
+    color: white;
+    background-color: gray;
+    position: absolute;
+    overflow: auto;
+    padding: 10px;
+    display: none;
+}
+
+.goLeft {
+    float:left;
+}
+
+#doublePopupHolder {
+    position:relative;
+    width:992px;
+    height:584px;
+    margin:0 auto;
+    display:none;
+}
+
+#deathScreenHolder .bodyHolder {
+    margin:0 auto;
+    width:370px;
+    height:100%;
+    text-align:center;
+    font-family: 'SegoeUISemibold';
+    font-size:20px;
+    color:white;
+}
+
+.popUpScreenBG {
+    position:absolute;
+    width:100%;
+    height:100%;
+    background-color:#160612;
+    opacity:.7;
+    z-index:-1;
+}
+
+#deathScreenHolder .bodyExtendedHolder {
+    margin:29px 0;
+    width:100%;
+    height:526px;
+    border-right:1px solid #d4145a;
+    z-index:0;
+}
+
+#deathScreenHolder #DeathNote {
+    width:370px;
+    height:311px;
+    background-image:url("/Images/Page/death_note.png");
+    background-repeat:no-repeat;
+    position:relative;
+}
+
+#deathScreenHolder #KilledByPhotoLarge {
+    position:relative;
+    top:-19px;
+    width:108px;
+    height:108px;
+    margin:0 auto;
+    display:block;
+}
+
+#deathScreenHolder h1 {
+    color: #d4145a;
+}
+
+    #deathScreenHolder h1, #deathScreenHolder p {
+        height:25px;
+        line-height:25px;
+    }
+
+    
+#deathScreenHolder {
+    z-index:0;
+}
+
+#leaderboardHolder {
+    z-index:-1;
+}
+
+#leaderboardHolder, #deathScreenHolder {
+    display: none;
+    position: relative;
+    margin: 0 auto;
+    width: 494px;    
+    height: 584px;
+}
+
+    #leaderboardHolder .offset {
+        margin: 29px;
+    }
+
+    #leaderboardHolder .lionHolder {
+        margin-bottom: 9px;
+        height: 105px;
+        width: 100%;
+    }
+
+        #leaderboardHolder .lionHolder #Lion {
+            background-image: url('/Images/Page/leaderboard_lion.png');
+            background-repeat: no-repeat;
+            width: 417px;
+            height: 105px;
+        }
+
+#leaderboard {
+    border-top: 4px solid #3c454f;
+    width: 100%;
+    height: 100%;
+    font-family: 'SegoeUISemibold';
+}
+
+#leaderboardHolder .row {
+    height: 71px;
+    border-bottom: 2px solid #3c454f;
+}
+
+    #leaderboardHolder .row .rowOffset {
+        height: 50px;
+        margin: 10px 0;
+    }
+
+    #leaderboardHolder .row .leaderboardImgHolder {
+        position:relative;
+        height: auto;
+        width: 50px;
+        margin-right: 13px;
+        float: left;
+    }
+    
+    #leaderboardHolder .row .isMe {
+        display:none;
+    }
+
+    #leaderboardHolder .row.highlight .isMe {
+        position:absolute;
+        left:-28px;
+        top:15px;
+        display:block;
+        width:25px;
+        height:19px;
+        background-image:url('/Images/Page/leaderboard_arrow.png');
+        background-repeat:no-repeat;
+    }
+
+    #leaderboardHolder .row .leaderboardPosHolder, 
+    #leaderboardHolder .row .leaderboardStatHolder{
+        height: auto;
+        width: auto;
+        color: white;
+        font-size: 16px;
+        float: left;
+    }
+
+        #leaderboardHolder .row .leaderboardPosHolder h1{
+            font-size: 32px;
+            font-family: 'SegoeUISemibold';
+            height: 27px;
+            line-height: 27px;
+            margin-bottom: 8px;
+        }
+
+    #leaderboardHolder .row .leaderboardStatHolder {
+        float:right;
+        text-align:right;
+        font-size:.8em;
+    }
+
+        #leaderboardHolder .row .leaderboardStatHolder h1 {
+            font-size: 20px;
+            font-family: 'SegoeUISemibold';
+            height: 30px;
+            line-height: 30px;
+            margin-bottom: 8px;
+        }
+
+#leaderboardHolder .dividerForMe {
+    text-align: center;
+    height: 15px;
+}
+
+
