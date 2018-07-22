@@ -1,0 +1,53 @@
+﻿html, body {
+    width:100%;
+    height:100%;
+    margin:0px;
+}
+
+
+    body.space {
+        background-color: black;
+    }
+
+p {
+    margin-top:8px;
+    margin-bottom:2px;
+}
+
+#game {
+    display:block;
+    position:absolute;
+}
+
+#gameWrapper {
+    position:relative;
+    width:100%;
+    height:100%;
+}
+
+#logout:hover {
+    cursor:pointer;    
+}
+
+#logout {
+    z-index:100;
+    text-align:center;
+    position:absolute;
+    width:100px;
+    height:22px;
+    line-height:22px;
+    left:47%;
+    top:0;
+    border:1px solid black;
+    background-color:#777777;
+    color:white;
+}
+
+h2 {
+    width:40px!important;
+    float:left!important;
+    margin:0px!important;
+    margin-right:40px!important;
+    height:166px!important;
+    line-height:166px!important;
+}
