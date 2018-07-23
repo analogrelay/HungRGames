@@ -57,10 +57,6 @@ export class ServerAdapter {
         this._connection.stop();
     }
 
-    public get State(): HubConnectionState {
-        return this._connection.state;
-    }
-
     public InvokeIfConnected(methodName: string, ...args: any[]): Promise<any> {
         if (this._connection.state != HubConnectionState.Connected) {
             return new Promise<any>(() => { });
