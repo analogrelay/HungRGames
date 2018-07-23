@@ -8,8 +8,6 @@ namespace ShootR
             Identity = identity;
             DisplayName = displayName;
             Photo = photo;
-
-            //_initialized = DateTime.UtcNow;
         }
 
         public string RegistrationID { get; set; }

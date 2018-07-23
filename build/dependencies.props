@@ -6,6 +6,8 @@
     <InternalAspNetCoreSdkPackageVersion>2.2.0-preview1-17090</InternalAspNetCoreSdkPackageVersion>
     <MicrosoftAspNetCoreAppPackageVersion>2.1.0</MicrosoftAspNetCoreAppPackageVersion>
     <BuildBundlerMinifierPackageVersion>2.4.337</BuildBundlerMinifierPackageVersion>
+    <MicrosoftAspNetCoreSignalRClientPackageVersion>1.0.2</MicrosoftAspNetCoreSignalRClientPackageVersion>
+    <MicrosoftAspNetCoreWebUtilities>2.1.1</MicrosoftAspNetCoreWebUtilities>
   </PropertyGroup>
 
   <Import Project="$(DotNetPackageVersionPropsPath)" Condition=" '$(DotNetPackageVersionPropsPath)' != '' " />
