@@ -37,7 +37,7 @@ namespace ShootR
         public Game(IHubContext<GameHub> gameHub)
         {
             Configuration = new GameConfigurationManager();
-            
+
             _gameLoop = new HighFrequencyTimer(1000 / Configuration.gameConfig.UPDATE_INTERVAL, async id => await Update(id), () => { }, () => { }, (fps) =>
             {
                 _actualFPS = fps;

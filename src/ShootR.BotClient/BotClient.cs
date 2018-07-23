@@ -32,7 +32,7 @@ namespace ShootR.BotClient
             _botInformation = botUserInformation;
         }
 
-        public async Task Connect(CancellationToken cancellationToken = default)
+        public async Task ConnectAsync(CancellationToken cancellationToken = default)
         {
             var handler = new HttpClientHandler() { CookieContainer = _cookies };
             var httpClient = new HttpClient(handler) { BaseAddress = _serverUri };
@@ -51,6 +51,13 @@ namespace ShootR.BotClient
             await _connection.InvokeAsync("bot_readyForPayloads", cancellationToken);
 
             _connected = true;
+        }
+
+        public async Task DisconnectAsync(CancellationToken cancellationToken = default)
+        {
+            await _connection.StopAsync(cancellationToken);
+
+            _connected = false;
         }
 
         public async Task FireAsync(CancellationToken cancellationToken = default)

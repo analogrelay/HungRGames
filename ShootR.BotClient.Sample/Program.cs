@@ -12,7 +12,7 @@ namespace ShootR.BotClient.Sample
             var botInformation = new BotUserInformation("BotSample");
             var botClient = new BotClient(serverUrl, botInformation);
 
-            await botClient.Connect();
+            await botClient.ConnectAsync();
         }
     }
 }

@@ -186,7 +186,7 @@ namespace ShootR
                 Wander();
             }
             else if (_state == AIState.Seeking)
-            {                
+            {
                 Seek(now);
             }
             else if (_state == AIState.Killing)
