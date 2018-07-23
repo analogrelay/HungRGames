@@ -12,7 +12,7 @@
   },
   "scripts": {
     "clean": "node ../node_modules/rimraf/bin.js ./dist",
-    "build": "npm run clean && npm run build:browser && npm run build:uglify",
+    "build": "npm run clean && npm run build:browser && npm run build:uglify && cp ./dist/browser/* ../../../src/ShootR/wwwroot/scripts",
     "build:esm": "node ../node_modules/typescript/bin/tsc --project ./tsconfig.json --module es2015 --outDir ./dist/esm -d && node ./build/process-dts.js",
     "build:cjs": "node ../node_modules/typescript/bin/tsc --project ./tsconfig.json --module commonjs --outDir ./dist/cjs",
     "build:browser": "node ../node_modules/webpack-cli/bin/cli.js",

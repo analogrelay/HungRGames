@@ -9,15 +9,9 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <ItemGroup>
-      <ShootRSourceFiles Include="../../clients/ts/shootr/dist/browser/*"></ShootRSourceFiles>
-    </ItemGroup>
-
     <Message Text="Compiling client..." Importance="high" />
     <Exec Command="npm install" WorkingDirectory="../../clients/ts" Condition="!Exists('../../clients/ts/node_modules')" />
     <Exec Command="npm run build" WorkingDirectory="../../clients/ts/shootr" />
-    <Message Text="Updating website ShootR client." Importance="high" />
-    <Copy SourceFiles="@(ShootRSourceFiles)" DestinationFolder="wwwroot/scripts" OverwriteReadOnlyFiles="true" />
   </Target>
 
 </Project>
