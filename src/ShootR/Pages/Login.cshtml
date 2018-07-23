@@ -1,0 +1,24 @@
+@page
+@model LoginModel
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="~/styles/bundles/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1>HungR Games!</h1>
+            <p>Powered by <a href="http://signalr.net/" target="_blank">SignalR</a> and <a href="http://endgate.net" target="_blank">EndGate</a>.</p>
+        </div>
+        <div class="row">
+            <form method="post" class="form-inline">
+                <input type="text" placeholder="Name" name="name" />
+                <button type="submit" class="btn">Join</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

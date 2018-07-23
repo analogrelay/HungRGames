@@ -332,5 +332,6 @@ ASALocalRun/
 
 clients/**/*.js
 clients/**/*.map.js
-src/ShootR/wwwroot/scripts/*.js 
-src/ShootR/wwwroot/scripts/*.js.map 
+
+src/ShootR/wwwroot/scripts
+src/ShootR/wwwroot/styles

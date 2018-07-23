@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -24,6 +27,9 @@ namespace ShootR
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddSignalR()
                 .AddJsonProtocol(o =>
                 {
@@ -32,7 +38,13 @@ namespace ShootR
 
             services.AddSingleton<Game>();
 
-            services.AddAuthentication().AddCookie();
+            services.AddAuthorization();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Login";
+                });
 
             services.AddDataProtection();
         }
@@ -55,47 +67,58 @@ namespace ShootR
 
                 if (state != null)
                 {
-                    try
+                    if (context.User == null)
                     {
-                        string decoded = HttpUtility.UrlDecode(state);
-                        var rc = JsonConvert.DeserializeObject<RegisteredClient>(decoded);
-
-                        if (rc.Identity == "Guest")
-                        {
-                            rc.DisplayName = "Guest" + Interlocked.Increment(ref GuestID);
-                            rc.Identity = "Guest" + Guid.NewGuid().ToString();
-                            rc.RegistrationID = null;
-                            rc.Photo = "";
-                        }
-                        else
-                        {
-                            Byte[] encryptedIdentity = WebEncoders.Base64UrlDecode(rc.Identity);
-                            var unprotectedIdentity = provider.CreateProtector("ShootR.Identity").Unprotect(encryptedIdentity);
-                            rc.Identity = Encoding.UTF8.GetString(unprotectedIdentity);
-                        }
-
-                        rc.DisplayName = System.Net.WebUtility.HtmlEncode(rc.DisplayName);
-
-                        game.RegistrationHandler.Register(rc);
-
-                        SetState(rc, context, provider);
+                        // Clear the state cookie.
+                        context.Response.Cookies.Delete("shootr.state");
                     }
-                    catch
+                    else
                     {
+                        try
+                        {
+                            string decoded = HttpUtility.UrlDecode(state);
+                            var rc = JsonConvert.DeserializeObject<RegisteredClient>(decoded);
+
+                            if (rc.Identity == "Guest")
+                            {
+                                rc.DisplayName = "Guest" + Interlocked.Increment(ref GuestID);
+                                rc.Identity = "Guest" + Guid.NewGuid().ToString();
+                                rc.RegistrationID = null;
+                                rc.Photo = "";
+                            }
+                            else
+                            {
+                                Byte[] encryptedIdentity = WebEncoders.Base64UrlDecode(rc.Identity);
+                                var unprotectedIdentity = provider.CreateProtector("ShootR.Identity").Unprotect(encryptedIdentity);
+                                rc.Identity = Encoding.UTF8.GetString(unprotectedIdentity);
+                            }
+
+                            rc.DisplayName = System.Net.WebUtility.HtmlEncode(rc.DisplayName);
+
+                            game.RegistrationHandler.Register(rc);
+
+                            SetState(rc, context, provider);
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
-                else
+                else if (context.User != null)
                 {
                     //hack
-                    var rc = new RegisteredClient(null, "Guest" + Guid.NewGuid().ToString(),
-                        System.Net.WebUtility.HtmlEncode("Guest" + Interlocked.Increment(ref GuestID)), "");
+                    var id = context.User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                    var name = context.User.Claims.Single(c => c.Type == ClaimTypes.Name).Value;
+                    var rc = new RegisteredClient(null, id, name, "");
                     game.RegistrationHandler.Register(rc);
 
-                    SetState(rc, context, provider);
+                    SetState(rc, context, provider); 
                 }
 
                 return next();
             });
+
+            app.UseMvc();
 
             app.UseSignalR(routes =>
             {
