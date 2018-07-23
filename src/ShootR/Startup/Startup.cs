@@ -67,7 +67,7 @@ namespace ShootR
 
                 if (state != null)
                 {
-                    if (context.User == null)
+                    if (!context.User.Identity.IsAuthenticated)
                     {
                         // Clear the state cookie.
                         context.Response.Cookies.Delete("shootr.state");
@@ -104,7 +104,7 @@ namespace ShootR
                         }
                     }
                 }
-                else if (context.User != null)
+                else if (context.User.Identity.IsAuthenticated)
                 {
                     //hack
                     var id = context.User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
