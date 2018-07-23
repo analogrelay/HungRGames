@@ -6,8 +6,10 @@ export class ShipInputController {
     public static DOUBLE_TAP_AFTER: eg.TimeSpan = eg.TimeSpan.FromMilliseconds(350);
 
     private _directions: IMoving;
+    // @ts-ignore
     private _lastBoostTap: Date;
     private _fireController: ShipFireController;
+    private _monitorBoostTap = false;
 
     constructor(private _keyboard: eg.Input.KeyboardHandler, private _onMove: (direction: string, startMoving: boolean) => void, private _onFire: (fireMethod: string) => void) {
         this._directions = {
@@ -16,7 +18,6 @@ export class ShipInputController {
             RotatingLeft: false,
             RotatingRight: false
         };
-        this._lastBoostTap = new Date();
 
         this.BindKeys(["w"], "OnCommandDown", "Forward", true);
         this.BindKeys(["d"], "OnCommandDown", "RotatingRight", true);
@@ -28,13 +29,19 @@ export class ShipInputController {
         this.BindKeys(["a"], "OnCommandUp", "RotatingLeft", false);
 
         this._keyboard.OnCommandUp("w", () => {
-            var now = new Date();
+            this._monitorBoostTap = true;
+        });
 
-            if (eg.TimeSpan.DateSpan(this._lastBoostTap, now).Milliseconds <= ShipInputController.DOUBLE_TAP_AFTER.Milliseconds) {
+        this._keyboard.OnCommandDown("w", () => {
+            const now = new Date();
+
+            if (this._monitorBoostTap && eg.TimeSpan.DateSpan(this._lastBoostTap, now).Milliseconds <= ShipInputController.DOUBLE_TAP_AFTER.Milliseconds) {
                 this._onMove("Boost", true);
             } else { // no double tap
                 this._lastBoostTap = now;
             }
+
+            this._monitorBoostTap = false;
         });
 
         this._fireController = new ShipFireController(this._keyboard, this._onFire);
