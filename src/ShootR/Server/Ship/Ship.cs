@@ -126,7 +126,17 @@ namespace ShootR
             }
         }
 
-        public virtual void ActivateAbility(string abilityName, Vector2 at, double angle, Vector2 velocity)
+        public void ActivateAbility(string abilityName)
+        {
+            Host.IdleManager.RecordActivity();
+
+            _enqueuedCommands.Enqueue(() =>
+            {
+                AbilityHandler.Activate(abilityName);
+            });
+        }
+
+        public void ActivateAbility(string abilityName, Vector2 at, double angle, Vector2 velocity)
         {
             Host.IdleManager.RecordActivity();
 
@@ -138,7 +148,17 @@ namespace ShootR
             });
         }
 
-        public virtual void DeactivateAbility(string abilityName, Vector2 at, double angle, Vector2 velocity)
+        public void DeactivateAbility(string abilityName)
+        {
+            Host.IdleManager.RecordActivity();
+
+            _enqueuedCommands.Enqueue(() =>
+            {
+                AbilityHandler.Deactivate(abilityName);
+            });
+        }
+
+        public void DeactivateAbility(string abilityName, Vector2 at, double angle, Vector2 velocity)
         {
             Host.IdleManager.RecordActivity();
 
@@ -150,7 +170,17 @@ namespace ShootR
             });
         }
 
-        public virtual void StartMoving(Movement where, Vector2 at, double angle, Vector2 velocity)
+        public void StartMoving(Movement where)
+        {
+            Host.IdleManager.RecordActivity();
+
+            _enqueuedCommands.Enqueue(() =>
+            {
+                MovementController.StartMoving(where);
+            });
+        }
+
+        public void StartMoving(Movement where, Vector2 at, double angle, Vector2 velocity)
         {
             Host.IdleManager.RecordActivity();
 
@@ -162,7 +192,17 @@ namespace ShootR
             });
         }
 
-        public virtual void StopMoving(Movement where, Vector2 at, double angle, Vector2 velocity)
+        public void StopMoving(Movement where)
+        {
+            Host.IdleManager.RecordActivity();
+
+            _enqueuedCommands.Enqueue(() =>
+            {
+                MovementController.StopMoving(where);
+            });
+        }
+
+        public void StopMoving(Movement where, Vector2 at, double angle, Vector2 velocity)
         {
             Host.IdleManager.RecordActivity();
 
@@ -174,7 +214,7 @@ namespace ShootR
             });
         }
 
-        public virtual void SyncMovement(Vector2 at, double angle, Vector2 velocity)
+        public void SyncMovement(Vector2 at, double angle, Vector2 velocity)
         {
             _enqueuedCommands.Enqueue(() =>
             {

@@ -17,6 +17,154 @@ namespace ShootR
             _logger = logger;
         }
 
+        #region BotAPI
+
+        public double bot_Fire()
+        {
+            return fire();
+        }
+
+        public void bot_readyForPayloads()
+        {
+            readyForPayloads();
+        }
+
+        public object bot_initializeClient(string registrationID)
+        {
+            return initializeClient(registrationID);
+        }
+
+        public void bot_startAndStopMovement(string toStop, string toStart)
+        {
+            if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+            {
+                try
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+
+                    if (ship.Controllable.Value)
+                    {
+                        Movement whereToStop = (Movement)Enum.Parse(typeof(Movement), toStop);
+                        Movement whereToStart = (Movement)Enum.Parse(typeof(Movement), toStart);
+                        ship.StopMoving(whereToStop);
+                        ship.StartMoving(whereToStart);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("startAndStopMovement", e);
+                }
+            }
+        }
+
+        public void bot_registerMoveStart(string movement)
+        {
+            if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+            {
+                try
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+
+                    if (ship.Controllable.Value)
+                    {
+                        var where = (Movement)Enum.Parse(typeof(Movement), movement);
+                        ship.StartMoving(where);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("registerMoveStart", e);
+                }
+            }
+        }
+
+        public void bot_registerMoveStop(string movement)
+        {
+            if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+            {
+                try
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+
+                    if (ship.Controllable.Value)
+                    {
+                        var where = (Movement)Enum.Parse(typeof(Movement), movement);
+                        ship.StopMoving(where);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("registerMoveStart", e);
+                }
+            }
+        }
+
+        public void bot_registerAbilityStart(string abilityName)
+        {
+            if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+            {
+                try
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+
+                    if (ship.Controllable.Value)
+                    {
+                        ship.ActivateAbility(abilityName);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("registerAbilityStart", e);
+                }
+            }
+        }
+
+        public void bot_registerAbilityStop(string abilityName)
+        {
+            if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+            {
+                try
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+
+                    if (ship.Controllable.Value)
+                    {
+                        ship.DeactivateAbility(abilityName);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("registerAbilityStart", e);
+                }
+            }
+        }
+
+        public void bot_boost()
+        {
+            bot_registerAbilityStart("boost");
+        }
+
+        public async Task bot_sendMessage(string message)
+        {
+
+            try
+            {
+                if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+                    var from = ship.Name;
+
+                    await Clients.AllExcept(new List<string> { Context.ConnectionId }).SendAsync("chatMessage", from, message, 0 /* standard message */);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("sendMessage", e);
+            }
+        }
+
+        #endregion
+
         public override Task OnConnectedAsync()
         {
             _game.ConnectionManager.OnConnected(Context.ConnectionId);
