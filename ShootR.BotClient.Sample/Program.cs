@@ -8,8 +8,6 @@ namespace ShootR.BotClient.Sample
     {
         static async Task Main(string[] args)
         {
-            //Thread.Sleep(TimeSpan.FromSeconds(8));
-
             var serverUrl = "http://localhost:5000";
             var botInformation = new BotUserInformation("BotSample");
             var botClient = new BotClient(serverUrl, botInformation);
