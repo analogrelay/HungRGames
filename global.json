@@ -1,0 +1,9 @@
+{
+    "sdk": {
+        "version": "2.1.300"
+    },
+    "msbuild-sdks": {
+        "Microsoft.DotNet.GlobalTools.Sdk": "2.2.0-preview1-17090",
+        "Internal.AspNetCore.Sdk": "2.2.0-preview1-17090"
+    }
+}

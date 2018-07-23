@@ -1,0 +1,30 @@
+﻿
+[
+  {
+    "outputFileName": "wwwroot/scripts/bundles/jqueryjs.js",
+    "inputFiles": [
+      "Scripts/jquery-1.9.1.js",
+      "Scripts/jquery.cookie.js",
+      "Scripts/jquery.animate-colors-min.js",
+      "Scripts/jquery-ui-1.9.0.js",
+      "Scripts/shortcut.js"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/styles/bundles/main.css",
+    "inputFiles": [
+      "Styles/jquery-ui-1.9.0.css",
+      "Styles/bootstrap.min.css",
+      "Styles/game.css",
+      "Styles/chat.css",
+      "Styles/gameHUD.css",
+      "Styles/popups.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  }
+]

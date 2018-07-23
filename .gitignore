@@ -13,7 +13,7 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
+bin/[Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -23,6 +23,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+dist/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -328,3 +329,6 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+clients/**/*.js
+clients/**/*.map.js
