@@ -9,7 +9,6 @@ import { ShipMovementController } from "../Ships/ShipMovementController";
 import { IPayloadData } from "../Server/IPayloadDefinitions";
 import { MathRoundTo } from "../../../endgate/Extensions/MathExtensions";
 import { ServerAdapter } from "../Server/ServerAdapter";
-import { HubConnection } from "../../../node_modules/@aspnet/signalr";
 
 export class UserShipManager implements eg.IUpdateable {
     public static SYNC_INTERVAL: eg.TimeSpan = eg.TimeSpan.FromSeconds(1.5);
@@ -18,14 +17,12 @@ export class UserShipManager implements eg.IUpdateable {
 
     private _shipInputController: ShipInputController;
     private _userCameraController: UserCameraController;
-    private _connection: HubConnection;
     private _lastSync: Date;
 
-    constructor(public ControlledShipId: number, private _shipManager: ShipManager, private _collisionManager: eg.Collision.CollisionManager, input: eg.Input.InputManager, private _camera: eg.Rendering.Camera2d, serverAdapter: ServerAdapter) {
-        this._connection = serverAdapter.Connection;
+    constructor(public ControlledShipId: number, private _shipManager: ShipManager, private _collisionManager: eg.Collision.CollisionManager, input: eg.Input.InputManager, private _camera: eg.Rendering.Camera2d, private _serverAdapter: ServerAdapter) {
         this._userCameraController = new UserCameraController(this.ControlledShipId, this._shipManager, this._camera);
         this._lastSync = new Date();
-        this.LatencyResolver = new LatencyResolver(serverAdapter);
+        this.LatencyResolver = new LatencyResolver(_serverAdapter);
 
         this._collisionManager.OnCollision.Bind((ship: eg.Collision.Collidable, boundary: eg.Collision.Collidable) => {
             if (ship instanceof Ship && boundary instanceof MapBoundary) {
@@ -65,7 +62,7 @@ export class UserShipManager implements eg.IUpdateable {
         }, (fireMethod: string) => {
                 var hubMethod: string = fireMethod.substr(0, 1).toUpperCase() + fireMethod.substring(1);
 
-                this._connection.invoke(hubMethod);
+                this._serverAdapter.InvokeIfConnected(hubMethod);
             });
     }
 
@@ -83,7 +80,7 @@ export class UserShipManager implements eg.IUpdateable {
         if (ship) {
             if (eg.TimeSpan.DateSpan(this._lastSync, gameTime.Now).Seconds > UserShipManager.SYNC_INTERVAL.Seconds && ship.LifeController.Alive) {
                 this._lastSync = gameTime.Now;
-                this._connection.invoke("syncMovement", { X: Math.round(ship.MovementController.Position.X - ship.Graphic.Size.HalfWidth), Y: Math.round(ship.MovementController.Position.Y - ship.Graphic.Size.HalfHeight) }, MathRoundTo(ship.MovementController.Rotation * 57.2957795, 2), { X: Math.round(ship.MovementController.Velocity.X), Y: Math.round(ship.MovementController.Velocity.Y) });
+                this._serverAdapter.InvokeIfConnected("syncMovement", { X: Math.round(ship.MovementController.Position.X - ship.Graphic.Size.HalfWidth), Y: Math.round(ship.MovementController.Position.Y - ship.Graphic.Size.HalfHeight) }, MathRoundTo(ship.MovementController.Rotation * 57.2957795, 2), { X: Math.round(ship.MovementController.Velocity.X), Y: Math.round(ship.MovementController.Velocity.Y) });
             }
 
             this._userCameraController.Update(gameTime);
@@ -93,7 +90,7 @@ export class UserShipManager implements eg.IUpdateable {
     private Invoke(method: string, pingBack: boolean, command: IShipCommand): void {
         var ship: Ship = this._shipManager.GetShip(this.ControlledShipId);
 
-        this._connection.invoke(method, command.Command, { X: Math.round(ship.MovementController.Position.X - ship.Graphic.Size.HalfWidth), Y: Math.round(ship.MovementController.Position.Y - ship.Graphic.Size.HalfHeight) }, MathRoundTo(ship.MovementController.Rotation * 57.2957795, 2), { X: Math.round(ship.MovementController.Velocity.X), Y: Math.round(ship.MovementController.Velocity.Y) }, pingBack);
+        this._serverAdapter.InvokeIfConnected(method, command.Command, { X: Math.round(ship.MovementController.Position.X - ship.Graphic.Size.HalfWidth), Y: Math.round(ship.MovementController.Position.Y - ship.Graphic.Size.HalfHeight) }, MathRoundTo(ship.MovementController.Rotation * 57.2957795, 2), { X: Math.round(ship.MovementController.Velocity.X), Y: Math.round(ship.MovementController.Velocity.Y) }, pingBack);
     }
 
     private NewMovementCommand(direction: string, startMoving: boolean): IShipCommand {

@@ -4,7 +4,6 @@ import { GameInformer } from "./GameInformer";
 import { UpdateRate } from "./UpdateRate";
 import { DrawRate } from "./DrawRate";
 import { PayloadRate } from "./PayloadRate";
-import { ConnectionMonitor } from "./ConnectionMonitor";
 import { Game } from "../Game";
 import { ServerAdapter } from "../Server/ServerAdapter";
 import { IPayloadData } from "../Server/IPayloadDefinitions";
@@ -17,7 +16,6 @@ export class DebugManager {
     private _updateRate: UpdateRate | undefined;
     private _drawRate: DrawRate | undefined;
     private _payloadRate: PayloadRate | undefined;
-    private _connectionMonitor: ConnectionMonitor | undefined;
     private _debugMode: boolean;
 
     constructor(myShipId: number, game: Game, serverAdapter: ServerAdapter) {
@@ -30,7 +28,6 @@ export class DebugManager {
             this._updateRate = new UpdateRate(this._gameInformer, game);
             this._drawRate = new DrawRate(this._gameInformer);
             this._payloadRate = new PayloadRate(this._gameInformer);
-            this._connectionMonitor = new ConnectionMonitor(this._gameInformer, serverAdapter);
         }
     }
 

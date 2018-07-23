@@ -5,7 +5,7 @@ import { PayloadDecompressor } from "./PayloadDecompressor";
 import { ServerConnectionManager } from "./ServerConnectionManager";
 import { IClientInitialization } from "./IClientInitialization";
 import { IUserInformation } from "./IUserInformation";
-import { HubConnection } from "../../../node_modules/@aspnet/signalr";
+import { HubConnection, HubConnectionState } from "@aspnet/signalr";
 
 export class ServerAdapter {
     public static NEGOTIATE_RETRIES: number = 3;
@@ -22,7 +22,7 @@ export class ServerAdapter {
     private _payloadDecompressor: PayloadDecompressor | undefined;
     private _connectionManager: ServerConnectionManager;
 
-    constructor(public Connection: HubConnection, authCookieName: string) {
+    constructor(private _connection: HubConnection, authCookieName: string) {
         this.OnPayload = new eg.EventHandler1<IPayloadData>();
         this.OnLeaderboardUpdate = new eg.EventHandler1<Array<ILeaderboardEntryData>>();
         this.OnForcedDisconnct = new eg.EventHandler();
@@ -30,16 +30,15 @@ export class ServerAdapter {
         this.OnPingRequest = new eg.EventHandler();
         this.OnMapResize = new eg.EventHandler1<eg.Size2d>();
         this.OnMessageReceived = new eg.EventHandler1<ChatMessage>();
-
         this._connectionManager = new ServerConnectionManager(authCookieName);
     }
 
     public Negotiate(): JQueryPromise<IClientInitialization> {
         let result = $.Deferred();
-        
+
         this.Wire();
 
-        this.Connection.start().then(() => {
+        this._connection.start().then(() => {
             let userInformation: IUserInformation = this._connectionManager.PrepareRegistration();
             this.TryInitialize(userInformation, (initialization: IClientInitialization) => {
                 initialization.UserInformation = userInformation;
@@ -47,7 +46,7 @@ export class ServerAdapter {
 
                 result.resolve(initialization);
 
-                this.Connection.invoke("readyForPayloads");
+                this.InvokeIfConnected("readyForPayloads");
             });
         }, (reason: any) => console.error("Failed to negotiate with server inthe adapter: " + reason));
 
@@ -55,11 +54,22 @@ export class ServerAdapter {
     }
 
     public Stop(): void {
-        this.Connection.stop();
+        this._connection.stop();
+    }
+
+    public get State(): HubConnectionState {
+        return this._connection.state;
+    }
+
+    public InvokeIfConnected(methodName: string, ...args: any[]): Promise<any> {
+        if (this._connection.state != HubConnectionState.Connected) {
+            return new Promise<any>(() => { });
+        }
+        return this._connection.invoke(methodName, ...args);
     }
 
     private TryInitialize(userInformation: IUserInformation, onComplete: (initialization: IClientInitialization) => void, count: number = 0): void {
-        this.Connection.invoke("initializeClient", userInformation.RegistrationID).then((initialization: IClientInitialization) => {
+        this.InvokeIfConnected("initializeClient", userInformation.RegistrationID).then((initialization: IClientInitialization) => {
             if (!initialization) {
                 if (count >= ServerAdapter.NEGOTIATE_RETRIES) {
                     console.log("Could not negotiate with server, refreshing the page.");
@@ -76,35 +86,35 @@ export class ServerAdapter {
     }
 
     private Wire(): void {
-        this.Connection.on("d", (payload: any) => {
+        this._connection.on("d", (payload: any) => {
             if (this._payloadDecompressor) {
                 this.OnPayload.Trigger(this._payloadDecompressor.Decompress(payload));
             }
         });
 
-        this.Connection.on("l", (leaderboardUpdate: any) => {
+        this._connection.on("l", (leaderboardUpdate: any) => {
             if (this._payloadDecompressor) {
                 this.OnLeaderboardUpdate.Trigger(this._payloadDecompressor.DecompressLeaderboard(leaderboardUpdate));
             }
         });
 
-        this.Connection.on("disconnect", () => {
+        this._connection.on("disconnect", () => {
             this.OnForcedDisconnct.Trigger();
         });
 
-        this.Connection.on("controlTransferred", () => {
+        this._connection.on("controlTransferred", () => {
             this.OnControlTransferred.Trigger();
         });
 
-        this.Connection.on("pingBack", () => {
+        this._connection.on("pingBack", () => {
             this.OnPingRequest.Trigger();
         });
 
-        this.Connection.on("mapSizeIncreased", (size: any) => {
+        this._connection.on("mapSizeIncreased", (size: any) => {
             this.OnMapResize.Trigger(new eg.Size2d(size.Width, size.Height));
         });
 
-        this.Connection.on("chatMessage", (from: string, message: string, type: number) => {
+        this._connection.on("chatMessage", (from: string, message: string, type: number) => {
             this.OnMessageReceived.Trigger(new ChatMessage(from, message, type));
         });
     }
