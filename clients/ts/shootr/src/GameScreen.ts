@@ -72,6 +72,6 @@ export class GameScreen {
     }
 
     public SendNewViewportToServer(): void {
-        this._serverAdapter.Connection.invoke("changeViewport", this.Viewport.Width, this.Viewport.Height);
+        this._serverAdapter.InvokeIfConnected("changeViewport", this.Viewport.Width, this.Viewport.Height);
     }
     }
