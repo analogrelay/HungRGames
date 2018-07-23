@@ -46,7 +46,7 @@ export class Chat {
                         var message = this._chatBox.val();
                         if (message) {
                             this.AddMessage(new ChatMessage(this._userInformation.Name, (<string>message), ChatMessageType.User));
-                            serverAdapter.Connection.invoke("sendMessage", message);
+                            serverAdapter.InvokeIfConnected("sendMessage", message);
                         }
                         this.HideChatBox();
                     } else {
