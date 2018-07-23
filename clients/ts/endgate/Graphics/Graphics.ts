@@ -733,7 +733,9 @@ export module Graphics {
         * Returns the base Size of the image source.
         */
         public get Size(): Size2d {
-            return this._size.Clone();
+            return !this._size
+                ? Size2d.Zero
+                : this._size.Clone();
         }
 
         /**
