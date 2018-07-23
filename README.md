@@ -13,3 +13,7 @@ ShootR Bots!
 - `dotnet run`
 - Party
 
+# Developing on the client
+After making a change in the client TypeScript your changes wont reflect on the server unless you force re-build it. #hacklife
+
+For EndGate API samples: http://endgate.azurewebsites.net/
