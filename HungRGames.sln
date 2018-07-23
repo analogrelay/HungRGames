@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{121D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShootR.BotClient.Sample", "ShootR.BotClient.Sample\ShootR.BotClient.Sample.csproj", "{1FCEE8EF-05EE-4810-BE57-796237330D2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShootR.Common", "src\ShootR.Common\ShootR.Common.csproj", "{A0A3F5FC-58A9-43A5-AEC7-6E51DEF8EE45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{1FCEE8EF-05EE-4810-BE57-796237330D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FCEE8EF-05EE-4810-BE57-796237330D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FCEE8EF-05EE-4810-BE57-796237330D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A3F5FC-58A9-43A5-AEC7-6E51DEF8EE45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A3F5FC-58A9-43A5-AEC7-6E51DEF8EE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A3F5FC-58A9-43A5-AEC7-6E51DEF8EE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A3F5FC-58A9-43A5-AEC7-6E51DEF8EE45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{59465E71-31BE-4992-BAF6-FADD86E1DEBE} = {20C2A45B-F957-400C-A07A-9F8A15D9E52A}
 		{E1465752-96CA-483D-8937-2CBE9F1723CB} = {20C2A45B-F957-400C-A07A-9F8A15D9E52A}
 		{1FCEE8EF-05EE-4810-BE57-796237330D2C} = {121D8594-4F1A-45CE-9AA2-169DAB0BE2A1}
+		{A0A3F5FC-58A9-43A5-AEC7-6E51DEF8EE45} = {20C2A45B-F957-400C-A07A-9F8A15D9E52A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44F25DE7-C7EA-4198-B72B-68F0F9B5D311}
