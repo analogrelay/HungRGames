@@ -153,7 +153,7 @@ namespace ShootR
 
         public void bot_boost()
         {
-            bot_startAbility("boost");
+            bot_startAbility("Boost");
         }
 
         public async Task bot_sendMessage(string message)

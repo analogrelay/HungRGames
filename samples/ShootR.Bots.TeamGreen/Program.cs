@@ -36,6 +36,7 @@ namespace ShootR.BotClient.Sample
                 {
                     lastSeenHealth = currentHealth;
                     await botClient.SendMessage("LET ME LANDDDD!!");
+                    await botClient.BoostAsync();
                 }
 
                 await botClient.FireAsync();
