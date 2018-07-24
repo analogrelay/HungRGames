@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShootR.AIClient", "src\Shoo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShootR.Bots.DerpyHooves", "samples\ShootR.Bots.DerpyHooves\ShootR.Bots.DerpyHooves.csproj", "{8B7DE0D4-679F-4F0D-948D-0B73E1B23B22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShootR.Bots.WhatTheBot", "samples\ShootR.Bots.WhatTheBot\ShootR.Bots.WhatTheBot.csproj", "{832128A6-0F11-48D8-B0B3-F1CF6A9BFCEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{8B7DE0D4-679F-4F0D-948D-0B73E1B23B22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B7DE0D4-679F-4F0D-948D-0B73E1B23B22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B7DE0D4-679F-4F0D-948D-0B73E1B23B22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{832128A6-0F11-48D8-B0B3-F1CF6A9BFCEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{832128A6-0F11-48D8-B0B3-F1CF6A9BFCEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{832128A6-0F11-48D8-B0B3-F1CF6A9BFCEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{832128A6-0F11-48D8-B0B3-F1CF6A9BFCEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +71,7 @@ Global
 		{FCA3A5E6-657F-48CC-9EF8-7D371EBAE9ED} = {121D8594-4F1A-45CE-9AA2-169DAB0BE2A1}
 		{34FC1F22-0547-46D8-9909-8FDC1E3212A5} = {20C2A45B-F957-400C-A07A-9F8A15D9E52A}
 		{8B7DE0D4-679F-4F0D-948D-0B73E1B23B22} = {121D8594-4F1A-45CE-9AA2-169DAB0BE2A1}
+		{832128A6-0F11-48D8-B0B3-F1CF6A9BFCEF} = {121D8594-4F1A-45CE-9AA2-169DAB0BE2A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44F25DE7-C7EA-4198-B72B-68F0F9B5D311}
