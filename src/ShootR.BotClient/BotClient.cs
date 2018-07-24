@@ -53,6 +53,7 @@ namespace ShootR.BotClient
             _connection.On<JArray>("l", (data) => { });
             _connection.On<JArray>("mapSizeIncreased", data => { });
             _connection.On("disconnect", () => DisconnectAsync().Wait());
+            _connection.On<string, string, int>("chatMessage", (from, message, type) => Console.WriteLine($"{from}: {message}"));
 
             await _connection.StartAsync(cancellationToken);
 
