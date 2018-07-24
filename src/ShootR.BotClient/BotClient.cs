@@ -36,7 +36,7 @@ namespace ShootR.BotClient
         {
             var handler = new HttpClientHandler() { CookieContainer = _cookies };
             var httpClient = new HttpClient(handler) { BaseAddress = _serverUri };
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/join?=" + _botInformation.DisplayName);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/join?={_botInformation.DisplayName}&role=Player");
             await httpClient.SendAsync(request, cancellationToken);
 
             await _connection.StartAsync(cancellationToken);
