@@ -18,7 +18,7 @@ namespace ShootR
             MyShip = ship;
             ConnectionID = connectionID;
 
-            Viewport = new Size(0, 0); // Initialize the viewport to 0 by 0
+            Viewport = new Size(600, 600);
 
             NotificationManager = new NotificationManager();
             IdleManager = new IdleManager(ship, NotificationManager);

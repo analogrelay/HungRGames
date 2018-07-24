@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
+using ShootR.Common.GameModel;
 using ShootR.GameModel;
 
 namespace ShootR.BotClient.Sample
@@ -10,8 +11,9 @@ namespace ShootR.BotClient.Sample
     {
         static async Task Main(string[] args)
         {
-            var serverUrl = "http://localhost:64163/";
-            var botInformation = new BotUserInformation("DerpyHooves");
+            var botName = "DerpyHooves";
+            var serverUrl = "http://localhost:30567/";
+            var botInformation = new BotUserInformation(botName);
             var botClient = new BotClient(serverUrl, botInformation);
 
             await botClient.ConnectAsync();
@@ -63,7 +65,7 @@ namespace ShootR.BotClient.Sample
                 {
                     WriteLine($"{ship.Name} ({ship.Id}), Level {ship.Level}, {ship.Life.Health}/{ship.MaxLife}, ({ship.Movement.Position.X}, {ship.Movement.Position.Y}) moving ({ship.Movement.Velocity.X},{ship.Movement.Velocity.Y})");
 
-                    if (ship.Name.Equals("BotSample"))
+                    if (ship.Name.Equals(botName))
                     {
                         ourShip = ship;
                     }
@@ -79,10 +81,12 @@ namespace ShootR.BotClient.Sample
                         forward = !forward;
                         if(forward)
                         {
+                            WriteLine("Stopping backward, starting forward.");
                             await botClient.StartAndStopMovementAsync(Common.GameModel.Movement.Backward, Common.GameModel.Movement.Forward);
                         }
                         else
                         {
+                            WriteLine("Stopping forward, starting backward.");
                             await botClient.StartAndStopMovementAsync(Common.GameModel.Movement.Forward, Common.GameModel.Movement.Backward);
                         }
                     }
