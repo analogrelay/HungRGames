@@ -14,11 +14,11 @@ namespace ShootR.Bots.WhatTheBot
         {
             if (args.Length < 1)
             {
-                Console.Error.WriteLine("ShootR.Bots.WhatTheBot [ShootR Server URL]");
-                return 1;
+                // Console.Error.WriteLine("ShootR.Bots.WhatTheBot [ShootR Server URL]");
+                // return 1;
             }
 
-            var url = args[0];
+            var url = args.Length > 0 ? args[0] : "http://localhost:5000";
 
             var token = CreateConsoleCancellationToken();
 
