@@ -199,6 +199,24 @@ export module Rendering {
             this._BufferCanvas = <HTMLCanvasElement>document.createElement("canvas");
             // @ts-ignore
             this._BufferContext = this._BufferCanvas.getContext("2d");
+            
+            // Adjust the scale to allow for device DPI
+            var scale = window.devicePixelRatio;
+            this._visibleContext.scale(scale, scale);
+            this._BufferContext.scale(scale, scale);
+            var origVisibleDraw = this._visibleContext.drawImage;
+            var origBufferDraw = this._BufferContext.drawImage;
+            (this._visibleContext as any).drawImage = (image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap, srcX: number, srcY: number, srcW: number, srcH: number, dstX: number, dstY: number, dstW: number, dstH: number): void =>
+            {
+                //origVisibleDraw(image, srcX * scale, srcY * scale, srcW * scale, srcH * scale, dstX * scale, dstY * scale, dstW * scale, dstH * scale);
+                origVisibleDraw.call(this._visibleContext, image, srcX * scale, srcY * scale);
+            };
+            (this._BufferContext as any).drawImage = (image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | ImageBitmap, srcX: number, srcY: number, srcW: number, srcH: number, dstX: number, dstY: number, dstW: number, dstH: number): void =>
+            {
+                //origBufferDraw(image, srcX * scale, srcY * scale, srcW * scale, srcH * scale, dstX * scale, dstY * scale, dstW * scale, dstH * scale);
+                origBufferDraw.call(this._BufferContext, image, srcX * scale, srcY * scale);
+            };
+
             this._onRendererSizeChange = new EventHandler1<Size2d>();
             this.UpdateBufferSize();
 

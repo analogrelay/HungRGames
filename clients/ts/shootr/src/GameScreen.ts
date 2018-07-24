@@ -38,8 +38,19 @@ export class GameScreen {
     }
 
     private UpdateGameCanvas(): void {
-        this._gameCanvas.attr("width", this.Viewport.Width);
-        this._gameCanvas.attr("height", this.Viewport.Height);
+        //this._gameCanvas.attr("width", this.Viewport.Width);
+        //this._gameCanvas.attr("height", this.Viewport.Height);
+
+        var canvas = this._gameCanvas[0] as HTMLCanvasElement;
+
+        // Set the display size in logical (CSS) pixels
+        canvas.style.width = Math.round(this.Viewport.Width) + 'px';
+        canvas.style.height = Math.round(this.Viewport.Height) + 'px';
+
+        // Scale the element according to the device pixel ratio
+        var scale = window.devicePixelRatio;
+        canvas.width = Math.round(scale * this.Viewport.Width);
+        canvas.height = Math.round(scale * this.Viewport.Height);
 
         if (this._popUpHolder) {
             this._popUpHolder.css("width", this.Viewport.Width);

@@ -5,7 +5,7 @@ export class ShipBodyGraphic extends eg.Graphics.Sprite2d {
     private static _bodyGraphics: Array<eg.Graphics.ImageSource>;
 
     constructor(levelManager: ShipLevelManager) {
-        super(0, 0, ShipBodyGraphic._bodyGraphics[Math.min(levelManager.Level, 13)]);
+        super(0, 0, ShipBodyGraphic._bodyGraphics[Math.min(levelManager.Level, 13)], 75, 75);
 
         levelManager.OnLevelChange.Bind((newLevel: number) => {
             this.Image = this.DetermineBody(levelManager);

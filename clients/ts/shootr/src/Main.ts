@@ -15,12 +15,12 @@ $(function () {
         serverAdapter: ServerAdapter = new ServerAdapter(connection, "shootr.state"),
         gameScreen: GameScreen = new GameScreen(gameCanvas, popUpHolder, serverAdapter);
 
-        serverAdapter.Negotiate().then((initializationData: IClientInitialization) => {
-            loadContent.hide();
-            gameContent.show();
+    serverAdapter.Negotiate().then((initializationData: IClientInitialization) => {
+        loadContent.hide();
+        gameContent.show();
 
-            game = new Game(<HTMLCanvasElement>gameCanvas[0], gameScreen, serverAdapter, initializationData);
-            gameScreen.ForceResizeCheck();
-        }, (reason) => console.error("Failed to negotiate with server: " + reason));
+        game = new Game(<HTMLCanvasElement>gameCanvas[0], gameScreen, serverAdapter, initializationData);
+        gameScreen.ForceResizeCheck();
+    }, (reason) => console.error("Failed to negotiate with server: " + reason));
 
 });

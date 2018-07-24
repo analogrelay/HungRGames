@@ -61,7 +61,7 @@ export class Game extends eg.Game {
         this.Content.LoadImage("BulletExplosion", "/Images/SpriteSheets/explosion_1.png", 320, 320);
         this.Content.LoadImage("ShipExplosion", "/Images/SpriteSheets/explosion_2.png", 768, 640);
         this.Content.LoadImage("Bullet", "/Images/Laser.png", 13, 13);
-        this.Content.LoadImage("Ship1", "/Images/Ships/ship_lvl1.png", 75, 75);
+        this.Content.LoadImage("Ship1", "/Images/Ships/ship_lvl1.png", 152, 151);
         this.Content.LoadImage("Ship3", "/Images/Ships/ship_lvl3.png", 75, 75);
         this.Content.LoadImage("Ship5", "/Images/Ships/ship_lvl5.png", 75, 75);
         this.Content.LoadImage("Ship7", "/Images/Ships/ship_lvl7.png", 75, 75);
