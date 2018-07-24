@@ -36,6 +36,16 @@ namespace ShootR
             return fire();
         }
 
+        public void bot_startFire()
+        {
+            startFire();
+        }
+
+        public void bot_stopFire()
+        {
+            stopFire();
+        }
+
         public void bot_startAndStopMovement(string toStop, string toStart)
         {
             if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
@@ -162,6 +172,29 @@ namespace ShootR
             catch (Exception e)
             {
                 _logger.LogError("sendMessage", e);
+            }
+        }
+
+        public void bot_stopMoving()
+        {
+            if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
+            {
+                try
+                {
+                    Ship ship = _game.UserHandler.GetUserShip(Context.ConnectionId);
+
+                    if (ship.Controllable.Value)
+                    {
+                        ship.StopMoving(Movement.Forward);
+                        ship.StopMoving(Movement.Backward);
+                        ship.StopMoving(Movement.RotatingLeft);
+                        ship.StopMoving(Movement.RotatingRight);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Stop moving", e);
+                }
             }
         }
 

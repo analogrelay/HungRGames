@@ -8,8 +8,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ShootR.BotClient.Payloads;
 using ShootR.Common.GameModel;
-using ShootR.GameModel;
-using Microsoft.Extensions.Logging;
 
 namespace ShootR.BotClient
 {
@@ -23,6 +21,7 @@ namespace ShootR.BotClient
         private InitializationData _initializationData;
         private PayloadDecompressor _payloadDecompressor;
         private SemaphoreSlim _payloadLock = new SemaphoreSlim(1, 1);
+        private PayloadTime _currentPayloadTime;
 
         public BotClient(string serverUrl, BotUserInformation botUserInformation)
         {
@@ -83,6 +82,36 @@ namespace ShootR.BotClient
             _connected = false;
         }
 
+        public async Task StartAutoFireAsync(CancellationToken cancellationToken = default)
+        {
+            EnsureConnected();
+
+            await _connection.SendAsync("bot_startFire", cancellationToken);
+        }
+
+        public async Task StopAutoFireAsync(CancellationToken cancellationToken = default)
+        {
+            EnsureConnected();
+
+            await _connection.SendAsync("bot_stopFire", cancellationToken);
+        }
+
+        public Task StartMovingForwardAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.Forward, cancellationToken);
+
+        public Task StartMovingBackwardAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.Backward, cancellationToken);
+
+        public Task StartRotatingLeftAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.RotatingLeft, cancellationToken);
+
+        public Task StartRotatingRightAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.RotatingRight, cancellationToken);
+
+        // Movement will not stop if the ship is uncontrollable.
+        public async Task StopMoving(CancellationToken cancellationToken = default)
+        {
+            EnsureConnected();
+
+            await _connection.SendAsync("bot_stopMoving", cancellationToken);
+        }
+
         public async Task FireAsync(CancellationToken cancellationToken = default)
         {
             EnsureConnected();
@@ -132,7 +161,8 @@ namespace ShootR.BotClient
             {
                 var serverPayload = parameters;
                 var payload = _payloadDecompressor.DecompressPayload(serverPayload);
-                var context = new UpdateContext(payload, _initializationData);
+                var context = new UpdateContext(_currentPayloadTime, payload, _initializationData);
+                _currentPayloadTime = context.Time;
                 await (OnUpdateAsync?.Invoke(context) ?? Task.CompletedTask);
             }
             finally
