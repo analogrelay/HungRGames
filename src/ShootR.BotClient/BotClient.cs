@@ -117,11 +117,11 @@ namespace ShootR.BotClient
             await _connection.SendAsync("bot_boost", cancellationToken);
         }
 
-        public async Task SendMessage(CancellationToken cancellationToken = default)
+        public async Task SendMessage(string message, CancellationToken cancellationToken = default)
         {
             EnsureConnected();
 
-            await _connection.SendAsync("bot_sendMessage", cancellationToken);
+            await _connection.SendAsync("bot_sendMessage", message, cancellationToken);
         }
 
         private async Task HandlePayloadAsync(JArray parameters)
