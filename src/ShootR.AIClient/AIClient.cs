@@ -27,16 +27,20 @@ namespace ShootR
             await _bot.ConnectAsync();
 
             _tokenSource = new CancellationTokenSource();
-            Task = Task.Factory.StartNew(() => {
-                // Spin around and shoot
+            Task = Task.Run(async () => {
+                // Spin around
+                await _bot.StartMovementAsync(Movement.RotatingRight);
+
                 while (true)
                 {
                     if (_tokenSource.Token.IsCancellationRequested)
                     {
                         break;
                     }
-                    _bot.StartMovement(Movement.RotatingRight);
-                    _bot.FireAsync();
+                    // And shoot
+                    await _bot.FireAsync();
+
+                    await Task.Delay(100);
                 }
             }, _tokenSource.Token);
         }

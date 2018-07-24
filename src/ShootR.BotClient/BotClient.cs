@@ -67,28 +67,28 @@ namespace ShootR.BotClient
             await _connection.InvokeAsync("bot_fire", cancellationToken);
         }
 
-        public async Task StartAndStopMovement(Movement toStop, Movement toStart, CancellationToken cancellationToken = default)
+        public async Task StartAndStopMovementAsync(Movement toStop, Movement toStart, CancellationToken cancellationToken = default)
         {
             EnsureConnected();
 
             await _connection.InvokeAsync("bot_StartAndStopMovement", toStop, toStart, cancellationToken);
         }
 
-        public async Task StartMovement(Movement movement, CancellationToken cancellationToken = default)
+        public async Task StartMovementAsync(Movement movement, CancellationToken cancellationToken = default)
         {
             EnsureConnected();
 
             await _connection.InvokeAsync("bot_startMovement", movement, cancellationToken);
         }
 
-        public async Task StopMovement(Movement movement, CancellationToken cancellationToken = default)
+        public async Task StopMovementAsync(Movement movement, CancellationToken cancellationToken = default)
         {
             EnsureConnected();
 
             await _connection.InvokeAsync("bot_stopMovement", movement, cancellationToken);
         }
 
-        public async Task Boost(CancellationToken cancellationToken = default)
+        public async Task BoostAsync(CancellationToken cancellationToken = default)
         {
             EnsureConnected();
 
