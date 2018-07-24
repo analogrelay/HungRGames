@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ShootR.BotClient;
 using ShootR.Common.GameModel;
+using ShootR.GameModel;
 
 namespace ShootR.Bots.DerpyHooves
 {
@@ -37,7 +38,7 @@ namespace ShootR.Bots.DerpyHooves
             _shootingPhase = new ShootingPhase(this);
         }
 
-        internal Task LogAsync(string message)
+        internal Task SayAsync(string message)
         {
             Console.WriteLine(message);
             return Client.SendMessage(message, CancellationToken);
@@ -58,7 +59,7 @@ namespace ShootR.Bots.DerpyHooves
             {
                 // Start with the spinning phase
                 _activePhase = _spinningPhase;
-                await _activePhase.StartAsync();
+                await _activePhase.StartAsync(context);
                 _phaseTimer.Reset();
             }
 
@@ -67,7 +68,7 @@ namespace ShootR.Bots.DerpyHooves
             if (_phaseTimer.HasElapsed)
             {
                 // Stop the active phase
-                await _activePhase.StopAsync();
+                await _activePhase.StopAsync(context);
 
                 // Swap phases
                 if (ReferenceEquals(_activePhase, _spinningPhase))
@@ -80,49 +81,49 @@ namespace ShootR.Bots.DerpyHooves
                 }
 
                 // Start the next phase
-                await _activePhase.StartAsync();
+                await _activePhase.StartAsync(context);
 
                 _phaseTimer.Reset();
             }
 
             // Tick the active phase
-            await _activePhase.TickAsync(_gameTime);
+            await _activePhase.TickAsync(context, _gameTime);
         }
 
         private interface IPhase
         {
-            Task StartAsync();
-            Task StopAsync();
-            Task TickAsync(GameTime gameTime);
+            Task StartAsync(UpdateContext context);
+            Task StopAsync(UpdateContext context);
+            Task TickAsync(UpdateContext context, GameTime gameTime);
         }
 
         private class ShootingPhase : IPhase
         {
             private readonly DerpyHoovesBot _bot;
-            private Timer _shotTimer = new Timer(TimeSpan.FromMilliseconds(250));
+            private Timer _shotTimer = new Timer(TimeSpan.FromMilliseconds(500));
 
             public ShootingPhase(DerpyHoovesBot bot)
             {
                 _bot = bot;
             }
 
-            public async Task StartAsync()
+            public async Task StartAsync(UpdateContext context)
             {
-                await _bot.LogAsync("ACTIVATING SHOOTING UNIT.");
+                await _bot.SayAsync("ACTIVATING SHOOTING UNIT.");
             }
 
-            public async Task StopAsync()
+            public async Task StopAsync(UpdateContext context)
             {
-                await _bot.LogAsync("DEACTIVATED SHOOTING MODULE.");
+                await _bot.SayAsync("DEACTIVATED SHOOTING MODULE.");
             }
 
-            public async Task TickAsync(GameTime gameTime)
+            public async Task TickAsync(UpdateContext context, GameTime gameTime)
             {
                 _shotTimer.Update(gameTime);
 
                 if (_shotTimer.HasElapsed)
                 {
-                    await _bot.LogAsync("EMITTING FRIENDSHIP PARTICLE.");
+                    await _bot.SayAsync("EMITTING FRIENDSHIP PARTICLE.");
                     await _bot.Client.FireAsync();
                     _shotTimer.Reset();
                 }
@@ -138,20 +139,31 @@ namespace ShootR.Bots.DerpyHooves
                 _bot = bot;
             }
 
-            public async Task StartAsync()
+            public async Task StartAsync(UpdateContext context)
             {
-                await _bot.LogAsync("INITIATING SPINNING ROUTINES.");
+                // Set the target vector
+                var targetVector = RotationHelper.RotateVector(Vector2.North, -(Math.PI / 2));
+
+                // Calculate the target rotation
+
+
+                await _bot.SayAsync("INITIATING SPINNING ROUTINES.");
+
+                // Start rotating
                 await _bot.Client.StartMovementAsync(Movement.RotatingLeft);
             }
 
-            public async Task StopAsync()
+            public async Task StopAsync(UpdateContext context)
             {
-                await _bot.LogAsync("DISENGAGING SPINNING PROTOCOL.");
+                await _bot.SayAsync("DISENGAGING SPINNING PROTOCOL.");
                 await _bot.Client.StopMovementAsync(Movement.RotatingLeft);
             }
 
-            public Task TickAsync(GameTime gameTime)
+            public Task TickAsync(UpdateContext context, GameTime gameTime)
             {
+                // Check if we're facing the right direction yet
+                
+
                 // Nothing to do for this phase
                 return Task.CompletedTask;
             }

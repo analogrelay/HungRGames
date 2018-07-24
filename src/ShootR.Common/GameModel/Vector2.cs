@@ -4,6 +4,11 @@ namespace ShootR.GameModel
 {
     public class Vector2
     {
+        public static readonly Vector2 North = new Vector2(0, -1);
+        public static readonly Vector2 East = new Vector2(1, 0);
+        public static readonly Vector2 South = new Vector2(0, 1);
+        public static readonly Vector2 West = new Vector2(-1, 0);
+
         public Vector2(double x, double y)
         {
             X = x;
@@ -75,6 +80,11 @@ namespace ShootR.GameModel
         public static Vector2 operator -(double num, Vector2 v1)
         {
             return new Vector2(num - v1.X, num - v1.Y);
+        }
+
+        public static double DotProduct(Vector2 left, Vector2 right)
+        {
+            return (left.X * right.X) + (left.Y * right.Y);
         }
 
         public override string ToString()
