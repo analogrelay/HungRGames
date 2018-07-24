@@ -52,7 +52,7 @@ export class Game extends eg.Game {
             this._shipManager.Initialize(new UserShipManager(initializationData.ShipID, this._shipManager, this.CollisionManager, this.Input, this.Scene.Camera, serverAdapter));
         } else {
             // Initialize the CameraManager
-            this._spectatorManager = new SpectatorManager(this._bufferedViewport, this.Scene.Camera, this.Input);
+            this._spectatorManager = new SpectatorManager(this._bufferedViewport, this.Scene.Camera, this.Input, this._shipManager);
         }
 
         this._bulletManager = new BulletManager(this._bufferedViewport, this.Scene, this.Content);

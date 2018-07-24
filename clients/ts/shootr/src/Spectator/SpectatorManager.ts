@@ -1,5 +1,7 @@
 import * as eg from "../../../endgate/endgate";
 import { CameraController } from "../Common/CameraController";
+import { ShipManager } from "../Ships/ShipManager";
+import { Ship } from "../Ships/Ship";
 
 export class SpectatorManager {
     private static readonly SPEED: number = 1_000;
@@ -9,6 +11,8 @@ export class SpectatorManager {
     private _position: eg.Vector2d;
     private _distance: number;
     private _inputController: eg.InputControllers.DirectionalInputController;
+
+    private _followShip: Ship | undefined;
 
     private _speed: number;
 
@@ -21,7 +25,8 @@ export class SpectatorManager {
         zoomIn: boolean
     } = { up: false, down: false, left: false, right: false, zoomOut: false, zoomIn: false };
 
-    constructor(private _viewport: eg.Bounds.BoundingRectangle, private _camera: eg.Rendering.Camera2d, private _input: eg.Input.InputManager) {
+    constructor(private _viewport: eg.Bounds.BoundingRectangle, private _camera: eg.Rendering.Camera2d,
+        private _input: eg.Input.InputManager, private _shipManager: ShipManager) {
         this._userCameraController = new CameraController(this._camera)
         this._position = new eg.Vector2d(0, 0);
         this._distance = this._camera.Distance;
@@ -51,6 +56,15 @@ export class SpectatorManager {
         this._input.Keyboard.OnCommandUp("l", () => {
             this._speed = SpectatorManager.SPEED;
         });
+
+        this._input.Mouse.OnClick.Bind((event: eg.Input.IMouseClickEvent) => {
+            let pos = this._camera.ToCameraRelative(event.Position);
+            let bounds = new eg.Bounds.BoundingRectangle(pos, new eg.Size2d(200));
+            let ship = this._shipManager.GetShipCollidingWith(bounds);
+            if (typeof ship !== "undefined") {
+                this._followShip = ship;
+            }
+        });
     }
 
     Update(gameTime: eg.GameTime): any {
@@ -58,6 +72,10 @@ export class SpectatorManager {
         const vector = this.GetVector();
         const deltaP = vector.Multiply(this._speed * gameTime.Elapsed.Seconds);
         this._position = this._position.Add(deltaP);
+
+        if (typeof this._followShip !== "undefined") {
+            this._position = this._followShip.Bounds.Position;
+        }
 
         // Get distance
         const deltaZ = this.GetDeltaZ() * this._speed * gameTime.Elapsed.Seconds;
@@ -103,6 +121,7 @@ export class SpectatorManager {
     }
 
     private OnMove(direction: string, startMoving: boolean) {
+        this._followShip = undefined;
         switch (direction) {
             case "Up":
                 this._movement.up = startMoving;

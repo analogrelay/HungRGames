@@ -24,6 +24,16 @@ export class ShipManager implements eg.IUpdateable {
         return this._ships[id];
     }
 
+    public GetShipCollidingWith(rectangle: eg.Bounds.BoundingRectangle): Ship | undefined {
+        for (var id in this._ships) {
+            if (this._ships[id].Bounds.IntersectsRectangle(rectangle)) {
+                return this._ships[id];
+            }
+        }
+
+        return undefined;
+    }
+
     public RemoveShip(shipID: number): void {
         delete this._ships[shipID];
     }
