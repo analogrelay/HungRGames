@@ -5,19 +5,12 @@ using Newtonsoft.Json.Linq;
 
 namespace ShootR.BotClient
 {
-    public class InitializationData
+    internal class InitializationData
     {
-        public InitializationData(JObject compressionContracts)
-        {
-            if (compressionContracts == null)
-            {
-                throw new ArgumentNullException(nameof(compressionContracts));
-            }
+        public JObject CompressionContracts { get; set; }
 
-            CompressionContracts = compressionContracts;
-        }
+        public ServerConfiguration Configuration { get; set; }
 
-        public JObject CompressionContracts { get; }
         /*
         Configuration: IConfigurationManager;
         ServerFull: boolean;

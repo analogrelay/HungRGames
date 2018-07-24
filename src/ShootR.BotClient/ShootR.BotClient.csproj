@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="$(MicrosoftAspNetCoreWebUtilities)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ShootR.Common\ShootR.Common.csproj" />
+  </ItemGroup>
+
 </Project>

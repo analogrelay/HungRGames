@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootR.BotClient.ShootR
+namespace ShootR.Common.GameModel
 {
     public enum Movement
     {

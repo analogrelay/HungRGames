@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using ShootR.BotClient;
-using ShootR.BotClient.ShootR;
+using ShootR.Common.GameModel;
 
 namespace ShootR
 {

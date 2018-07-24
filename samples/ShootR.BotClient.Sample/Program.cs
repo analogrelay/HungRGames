@@ -13,6 +13,15 @@ namespace ShootR.BotClient.Sample
             var botClient = new BotClient(serverUrl, botInformation);
 
             await botClient.ConnectAsync();
+            var tcs = new TaskCompletionSource<bool>();
+
+
+            botClient.OnPayload += (payload) =>
+            {
+            };
+
+
+            await tcs.Task;
         }
     }
 }

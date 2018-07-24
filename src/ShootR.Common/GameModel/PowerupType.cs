@@ -2,6 +2,6 @@ namespace ShootR.GameModel
 {
     public enum PowerupType
     {
-        HealthPack,
+        HealthPack = 1,
     }
 }
