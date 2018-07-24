@@ -7,9 +7,9 @@ namespace ShootR.Controllers
     public class ApiController : Controller
     {
         [Route("join")]
-        public async Task<IActionResult> Join([FromQuery] string name, [FromQuery] string role)
+        public async Task<IActionResult> Join([FromQuery] string name, [FromQuery] string role, [FromQuery] string photoUrl)
         {
-            await LoginHelper.SignInAsync(HttpContext, name, role);
+            await LoginHelper.SignInAsync(HttpContext, name, role, photoUrl);
             return Ok();
         }
     }

@@ -8,9 +8,9 @@ namespace ShootR.Pages
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        public async Task<IActionResult> OnPostAsync(string name, string role)
+        public async Task<IActionResult> OnPostAsync(string name, string role, string photoUrl)
         {
-            await LoginHelper.SignInAsync(HttpContext, name, role);
+            await LoginHelper.SignInAsync(HttpContext, name, role, photoUrl);
             return Redirect("/");
         }
     }

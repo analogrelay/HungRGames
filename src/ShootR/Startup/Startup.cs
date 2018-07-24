@@ -110,7 +110,8 @@ namespace ShootR
                     var id = context.User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
                     var name = context.User.Claims.Single(c => c.Type == ClaimTypes.Name).Value;
                     var role = context.User.Claims.Single(c => c.Type == ClaimTypes.Role).Value;
-                    var rc = new RegisteredClient(null, id, name, "", role);
+                    var photo = context.User.Claims.SingleOrDefault(c => c.Type == "photo")?.Value;
+                    var rc = new RegisteredClient(null, id, name, photo, role);
                     game.RegistrationHandler.Register(rc);
 
                     SetState(rc, context, provider); 
