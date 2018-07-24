@@ -77,7 +77,7 @@ namespace ShootR.BotClient.Payloads
             };
             var name = ExtractValue<string>(data, _shipContract.Name);
             var maxLife = ExtractValue<double>(data, _shipContract.MaxLife);
-            var level = ExtractValue<int>(data, _shipContract.MaxLife);
+            var level = ExtractValue<int>(data, _shipContract.Level);
             var boosting = ExtractValue<bool>(data, _shipContract.Boost);
             var abilityData = new AbilityData()
             {
