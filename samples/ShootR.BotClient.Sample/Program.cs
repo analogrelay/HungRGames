@@ -11,7 +11,7 @@ namespace ShootR.BotClient.Sample
     {
         static async Task Main(string[] args)
         {
-            var botName = "DerpyHooves";
+            var botName = "SampleBot";
             var serverUrl = "http://localhost:30567/";
             var botInformation = new BotUserInformation(botName);
             var botClient = new BotClient(serverUrl, botInformation);
