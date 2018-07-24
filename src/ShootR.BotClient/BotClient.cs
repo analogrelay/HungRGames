@@ -20,7 +20,7 @@ namespace ShootR.BotClient
         private readonly Uri _serverUri;
         private bool _connected;
         private PayloadDecompressor _payloadDecompressor;
-        private object _payloadLock = new object();
+        private SemaphoreSlim _payloadLock = new SemaphoreSlim(1, 1);
 
         public BotClient(string serverUrl, BotUserInformation botUserInformation)
         {
@@ -36,7 +36,7 @@ namespace ShootR.BotClient
             _botInformation = botUserInformation;
         }
 
-        public Action<PayloadData> OnPayload { get; set; }
+        public Func<PayloadData, Task> OnPayloadAsync { get; set; }
 
         public async Task ConnectAsync(CancellationToken cancellationToken = default)
         {
@@ -115,16 +115,19 @@ namespace ShootR.BotClient
             await _connection.InvokeAsync("bot_sendMessage", cancellationToken);
         }
 
-        private Task HandlePayloadAsync(object[] parameters)
+        private async Task HandlePayloadAsync(object[] parameters)
         {
-            lock (_payloadLock)
+            await _payloadLock.WaitAsync();
+            try
             {
                 var serverPayload = (JArray)parameters[0];
                 var payload = _payloadDecompressor.DecompressPayload(serverPayload);
 
-                OnPayload?.Invoke(payload);
-
-                return Task.CompletedTask;
+                await (OnPayloadAsync?.Invoke(payload) ?? Task.CompletedTask);
+            }
+            finally
+            {
+                _payloadLock.Release();
             }
         }
 
