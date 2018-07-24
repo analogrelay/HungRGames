@@ -35,6 +35,7 @@ namespace ShootR
         public string ConnectionID { get; set; }
         public bool Controller { get; set; }
         public bool Connected { get; set; }
+        public bool IsPlayer { get; set; }
         public RegisteredClient RegistrationTicket { get; set; }
         public NotificationManager NotificationManager { get; private set; }
 

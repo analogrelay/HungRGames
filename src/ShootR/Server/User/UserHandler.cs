@@ -23,7 +23,7 @@ namespace ShootR
             //user.IdleManager.OnIdleTimeout += DisconnectUser;
             user.IdleManager.OnComeBack += _gameHandler.AddShipToGame;
 
-            if (!user.Controller)
+            if (!user.Controller && user.MyShip != null)
             {
                 user.MyShip.OnFire += _gameHandler.AddBulletToGame;
             }

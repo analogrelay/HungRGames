@@ -127,7 +127,7 @@ namespace ShootR
         /// Retrieves the game's configuration
         /// </summary>
         /// <returns>The game's configuration</returns>
-        public object initializeClient(string connectionId, RegisteredClient rc)
+        public object initializeClient(string connectionId, RegisteredClient rc, bool isPlayer)
         {
             if (!UserHandler.UserExistsAndReady(connectionId))
             {
@@ -148,15 +148,24 @@ namespace ShootR
                         }
                         else
                         {
-                            ship = new Ship(this, RespawnManager.GetRandomStartPosition(), GameHandler.BulletManager);
-                            ship.Name = rc.DisplayName;
-                            user = new User(connectionId, ship, rc) { Controller = false };
+                            // Only create a ship if they are a player
+                            if (isPlayer)
+                            {
+                                ship = new Ship(this, RespawnManager.GetRandomStartPosition(), GameHandler.BulletManager);
+                                ship.Name = rc.DisplayName;
+                            }
+
+                            user = new User(connectionId, ship, rc) { Controller = false, IsPlayer = isPlayer };
                             UserHandler.AddUser(user);
                         }
                     }
 
-                    GameHandler.AddShipToGame(ship);
+                    if (ship != null)
+                    {
+                        GameHandler.AddShipToGame(ship);
+                    }
 
+                    ship = UserHandler.GetUserShip(connectionId);
                     return new
                     {
                         Configuration = Configuration,
@@ -170,8 +179,9 @@ namespace ShootR
                             LeaderboardEntryContract = _payloadManager.Compressor.LeaderboardEntryCompressionContract,
                             PowerupContract = _payloadManager.Compressor.PowerupCompressionContract
                         },
-                        ShipID = UserHandler.GetUserShip(connectionId).ID,
-                        ShipName = UserHandler.GetUserShip(connectionId).Name
+                        ShipID = ship?.ID,
+                        ShipName = ship?.Name,
+                        IsPlayer = isPlayer,
                     };
                 }
                 catch

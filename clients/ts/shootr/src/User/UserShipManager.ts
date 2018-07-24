@@ -1,7 +1,7 @@
 import * as eg from "../../../endgate/endgate";
 import { LatencyResolver } from "./LatencyResolver";
 import { ShipInputController } from "../Ships/ShipInputController";
-import { UserCameraController } from "./UserCameraController";
+import { CameraController } from "../Common/CameraController";
 import { ShipManager } from "../Ships/ShipManager";
 import { Ship } from "../Ships/Ship";
 import { MapBoundary } from "../Space/MapBoundary";
@@ -16,11 +16,11 @@ export class UserShipManager implements eg.IUpdateable {
     public LatencyResolver: LatencyResolver;
 
     private _shipInputController: ShipInputController;
-    private _userCameraController: UserCameraController;
+    private _userCameraController: CameraController;
     private _lastSync: Date;
 
     constructor(public ControlledShipId: number, private _shipManager: ShipManager, private _collisionManager: eg.Collision.CollisionManager, input: eg.Input.InputManager, private _camera: eg.Rendering.Camera2d, private _serverAdapter: ServerAdapter) {
-        this._userCameraController = new UserCameraController(this.ControlledShipId, this._shipManager, this._camera);
+        this._userCameraController = new CameraController(this._camera);
         this._lastSync = new Date();
         this.LatencyResolver = new LatencyResolver(_serverAdapter);
 
@@ -84,7 +84,7 @@ export class UserShipManager implements eg.IUpdateable {
                 this._serverAdapter.InvokeIfConnected("syncMovement", { X: Math.round(ship.MovementController.Position.X - ship.Graphic.Size.HalfWidth), Y: Math.round(ship.MovementController.Position.Y - ship.Graphic.Size.HalfHeight) }, MathRoundTo(ship.MovementController.Rotation * 57.2957795, 2), { X: Math.round(ship.MovementController.Velocity.X), Y: Math.round(ship.MovementController.Velocity.Y) });
             }
 
-            this._userCameraController.Update(gameTime);
+            this._userCameraController.UpdateCamera(gameTime, ship.MovementController.Position, eg.Rendering.Camera2d.DefaultDistance);
         }
     }
 

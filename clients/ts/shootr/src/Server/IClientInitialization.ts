@@ -8,4 +8,5 @@ export interface IClientInitialization {
     ShipID: number;
     ShipName: string;
     UserInformation: IUserInformation;
+    IsPlayer: boolean;
 }

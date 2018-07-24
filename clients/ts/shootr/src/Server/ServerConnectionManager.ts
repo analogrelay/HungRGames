@@ -17,7 +17,8 @@ export class ServerConnectionManager {
             return {
                 Name: state.DisplayName,
                 Photo: state.Photo,
-                RegistrationID: registrationID
+                RegistrationID: registrationID,
+                Role: state.Role,
             };
         } else {
             throw new Error("Registration ID not available.");

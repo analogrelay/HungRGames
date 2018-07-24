@@ -16,7 +16,8 @@
         <div class="row">
             <form method="post" class="form-inline">
                 <input type="text" placeholder="Name" name="name" />
-                <button type="submit" class="btn">Join</button>
+                <button type="submit" name="role" value="@LoginHelper.PlayerRole" class="btn">Join</button>
+                <button type="submit" name="role" value="@LoginHelper.SpectatorRole" class="btn">Spectate</button>
             </form>
         </div>
     </div>

@@ -13,6 +13,7 @@ import { UserShipManager } from "./User/UserShipManager";
 import { IPayloadData } from "./Server/IPayloadDefinitions";
 import { Map } from "./Space/Map";
 import { AreaRenderer } from "./Space/AreaRenderer";
+import { SpectatorManager } from "./Spectator/SpectatorManager";
 
 export class Game extends eg.Game {
     public static GameConfiguration: ConfigurationManager;
@@ -24,6 +25,7 @@ export class Game extends eg.Game {
     private _bufferedViewport: eg.Bounds.BoundingRectangle;
     private _map: Map;
     private _hud: HUDManager;
+    private _spectatorManager?: SpectatorManager;
 
     constructor(gameCanvas: HTMLCanvasElement, gameScreen: GameScreen, serverAdapter: ServerAdapter, initializationData: IClientInitialization) {
         super(gameCanvas);
@@ -33,14 +35,41 @@ export class Game extends eg.Game {
         this.Configuration.CollisionConfiguration.MinQuadTreeNodeSize = new eg.Size2d(75); // Size of a ship
         this.Configuration.CollisionConfiguration.InitialQuadTreeSize = new eg.Size2d(10125); // Initial Map Size x 2
 
-        this._bufferedViewport = new eg.Bounds.BoundingRectangle(this.Scene.Camera.Position, this.Scene.Camera.Size.Add(GameScreen.SCREEN_BUFFER_AREA));
+        if (initializationData.IsPlayer) {
+            this._bufferedViewport = new eg.Bounds.BoundingRectangle(this.Scene.Camera.Position, this.Scene.Camera.Size.Add(GameScreen.SCREEN_BUFFER_AREA));
+        }
+        else {
+            this._bufferedViewport = new eg.Bounds.BoundingRectangle(
+                eg.Vector2d.Zero,
+                Map.SIZE
+            );
+            console.log(`vp: ${this._bufferedViewport.Size.Width}x${this._bufferedViewport.Size.Height}`);
+        }
+
         this._shipManager = new ShipManager(this._bufferedViewport, this.Scene, this.CollisionManager, this.Content);
-        this._shipManager.Initialize(new UserShipManager(initializationData.ShipID, this._shipManager, this.CollisionManager, this.Input, this.Scene.Camera, serverAdapter));
+
+        if (initializationData.IsPlayer) {
+            this._shipManager.Initialize(new UserShipManager(initializationData.ShipID, this._shipManager, this.CollisionManager, this.Input, this.Scene.Camera, serverAdapter));
+        } else {
+            // Initialize the CameraManager
+            this._spectatorManager = new SpectatorManager(this._bufferedViewport, this.Scene.Camera, this.Input);
+        }
+
         this._bulletManager = new BulletManager(this._bufferedViewport, this.Scene, this.Content);
         this._powerupManager = new PowerupManager(this._bufferedViewport, this.Scene, this.Content);
         this._map = new Map(this.Scene, this.CollisionManager, this.Content, this.Input.Keyboard, serverAdapter);
         this._debugManager = new DebugManager(initializationData.ShipID, this, serverAdapter);
         this._hud = new HUDManager(initializationData, this._shipManager, (<AreaRenderer>this._map.AreaRenderer), this.Input.Keyboard, serverAdapter);
+
+        if (!initializationData.IsPlayer) {
+            serverAdapter.OnMapResize.Bind((newSize: eg.Size2d) => {
+                this._bufferedViewport = new eg.Bounds.BoundingRectangle(
+                    eg.Vector2d.Zero,
+                    Map.SIZE
+                );
+                console.log(`vp: ${this._bufferedViewport.Size.Width}x${this._bufferedViewport.Size.Height}`);
+            });
+        }
 
         serverAdapter.OnPayload.Bind((payload: IPayloadData) => {
             this._shipManager.LoadPayload(payload);
@@ -52,7 +81,10 @@ export class Game extends eg.Game {
 
         gameScreen.OnResize.Bind((newSize: eg.Size2d) => {
             this._hud.OnScreenResize(newSize);
-            this._bufferedViewport.Size = newSize.Add(GameScreen.SCREEN_BUFFER_AREA);
+
+            if (initializationData.IsPlayer) {
+                this._bufferedViewport.Size = newSize.Add(GameScreen.SCREEN_BUFFER_AREA);
+            }
         });
     }
 
@@ -88,7 +120,11 @@ export class Game extends eg.Game {
         this._bulletManager.Update(gameTime);
         this._powerupManager.Update(gameTime);
         this._hud.Update(gameTime);
-        this._debugManager.Update(gameTime);            
+        this._debugManager.Update(gameTime);
+
+        if (this._spectatorManager) {
+            this._spectatorManager.Update(gameTime);
+        }
     }
 
     // Most drawing takes place via the Scene.

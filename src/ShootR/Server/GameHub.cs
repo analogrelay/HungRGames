@@ -270,7 +270,7 @@ namespace ShootR
         {
             if (_game.RegistrationHandler.RegistrationExists(registrationID))
             {
-                return _game.initializeClient(Context.ConnectionId, _game.RegistrationHandler.RemoveRegistration(registrationID));
+                return _game.initializeClient(Context.ConnectionId, _game.RegistrationHandler.RemoveRegistration(registrationID), Context.User.IsInRole(LoginHelper.PlayerRole));
             }
 
             return null;

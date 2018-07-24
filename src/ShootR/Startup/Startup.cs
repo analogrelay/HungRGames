@@ -109,7 +109,8 @@ namespace ShootR
                     //hack
                     var id = context.User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
                     var name = context.User.Claims.Single(c => c.Type == ClaimTypes.Name).Value;
-                    var rc = new RegisteredClient(null, id, name, "");
+                    var role = context.User.Claims.Single(c => c.Type == ClaimTypes.Role).Value;
+                    var rc = new RegisteredClient(null, id, name, "", role);
                     game.RegistrationHandler.Register(rc);
 
                     SetState(rc, context, provider); 
@@ -131,7 +132,7 @@ namespace ShootR
             // Save the cookie state
             Byte[] identity = Encoding.UTF8.GetBytes(rc.Identity);
             Byte[] encrypted = provider.CreateProtector("ShootR.Identity").Protect(identity);
-            var temp = new RegisteredClient(rc.RegistrationID, WebEncoders.Base64UrlEncode(encrypted), rc.DisplayName, rc.Photo);
+            var temp = new RegisteredClient(rc.RegistrationID, WebEncoders.Base64UrlEncode(encrypted), rc.DisplayName, rc.Photo, rc.Role);
             var state = JsonConvert.SerializeObject(temp);
 
             context.Response.Cookies.Append("shootr.state", state, new CookieOptions

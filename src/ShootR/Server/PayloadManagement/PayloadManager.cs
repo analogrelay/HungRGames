@@ -31,10 +31,20 @@ namespace ShootR
 
                     var payload = GetInitializedPayload(playerCount, bulletCount, user);
 
-                    if (!user.IdleManager.Idle)
+                    if (!user.IsPlayer || !user.IdleManager.Idle)
                     {
-                        Vector2 screenPosition = user.MyShip.MovementController.Position - screenOffset;
-                        List<Collidable> onScreen = space.Query(new Rectangle(Convert.ToInt32(screenPosition.X), Convert.ToInt32(screenPosition.Y), user.Viewport.Width + SCREEN_BUFFER_AREA, user.Viewport.Height + SCREEN_BUFFER_AREA));
+                        List<Collidable> onScreen;
+                        if (user.IsPlayer)
+                        {
+                            // Only show them what they can see
+                            Vector2 screenPosition = user.MyShip.MovementController.Position - screenOffset;
+                            onScreen = space.Query(new Rectangle(Convert.ToInt32(screenPosition.X), Convert.ToInt32(screenPosition.Y), user.Viewport.Width + SCREEN_BUFFER_AREA, user.Viewport.Height + SCREEN_BUFFER_AREA));
+                        }
+                        else
+                        {
+                            // Send them EVERYTHING
+                            onScreen = space.Query(new Rectangle(0, 0, Map.WIDTH, Map.HEIGHT));
+                        }
 
                         foreach (Collidable obj in onScreen)
                         {
@@ -44,12 +54,12 @@ namespace ShootR
 
                                 if (obj.Altered() || !_payloadCache.ExistedLastPayload(connectionID, obj))
                                 {
-                                    payload.Bullets.Add(Compressor.Compress((Bullet)obj));
+                                    payload.Bullets.Add(Compressor.Compress((Bullet) obj));
                                 }
                             }
                             else if (obj is Ship)
                             {
-                                payload.Ships.Add(Compressor.Compress(((Ship)obj)));
+                                payload.Ships.Add(Compressor.Compress(((Ship) obj)));
                             }
                             else if (obj is Powerup)
                             {
@@ -57,7 +67,7 @@ namespace ShootR
 
                                 if (obj.Altered() || !_payloadCache.ExistedLastPayload(connectionID, obj))
                                 {
-                                    payload.Powerups.Add(Compressor.Compress(((Powerup)obj)));
+                                    payload.Powerups.Add(Compressor.Compress(((Powerup) obj)));
                                 }
                             }
                         }
@@ -106,12 +116,12 @@ namespace ShootR
             return new Payload()
             {
                 LeaderboardPosition = user.CurrentLeaderboardPosition,
-                Kills = user.MyShip.StatRecorder.Kills,
-                Deaths = user.MyShip.StatRecorder.Deaths,
+                Kills = user.MyShip?.StatRecorder?.Kills ?? 0,
+                Deaths = user.MyShip?.StatRecorder?.Deaths ?? 0,
                 ShipsInWorld = playerCount,
                 BulletsInWorld = bulletCount,
-                Experience = user.MyShip.LevelManager.Experience,
-                ExperienceToNextLevel = user.MyShip.LevelManager.ExperienceToNextLevel,
+                Experience = user.MyShip?.LevelManager?.Experience ?? 0,
+                ExperienceToNextLevel = user.MyShip?.LevelManager?.ExperienceToNextLevel ?? 0,
                 Notification = user.NotificationManager.PullNotification(),
             };
         }
