@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="$(MicrosoftAspNetCoreAppPackageVersion)" />
     <ProjectReference Include="..\ShootR.BotClient\ShootR.BotClient.csproj" />
+    <ProjectReference Include="..\ShootR.Common\ShootR.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,10 @@
     <PackageReference Include="BuildBundlerMinifier" Version="$(BuildBundlerMinifierPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ShootR.Common\ShootR.Common.csproj" />
+  </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Message Text="Compiling client..." Importance="high" />
     <Exec Command="npm install" WorkingDirectory="../../clients/ts" Condition="!Exists('../../clients/ts/node_modules')" />
