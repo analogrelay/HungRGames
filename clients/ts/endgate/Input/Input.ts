@@ -6,14 +6,8 @@ import { NoopTripInvoker } from "../Utilities/NoopTripInvoker";
 
 export module Input {
 
-    export class MouseButton {
-        public static Left: string = "Left";
-        public static Middle: string = "Middle";
-        public static Right: string = "Right";
-    }
-
     /**
-    * Defines an all around Input handler which manages mouse and keyboard events.
+    * Defines an all around Input handler which manages gamepad, mouse and keyboard events.
     */
     export class InputManager implements IDisposable {
         /**
@@ -24,6 +18,10 @@ export module Input {
         * Used to bind functions to keyboard related events.
         */
         public Keyboard: KeyboardHandler;
+        /**
+         * Used to bind functions to Gamepad related events.
+         */
+        public Gamepad: GamepadHandler;
 
         private _disposed: boolean;
 
@@ -35,6 +33,7 @@ export module Input {
             this._disposed = false;
             this.Mouse = new MouseHandler(target);
             this.Keyboard = new KeyboardHandler();
+            this.Gamepad = new GamepadHandler();
         }
 
         /**
@@ -46,21 +45,296 @@ export module Input {
 
                 this.Mouse.Dispose();
                 this.Keyboard.Dispose();
+                this.Gamepad.Dispose();
             }
             else {
-                throw new Error("MouseHandler cannot be disposed more than once");
+                throw new Error("InputManager cannot be disposed more than once");
             }
         }
     }
 
     /**
-* Defines a handler that will monitor mouse events over a specified area and will execute appropriate functions based on the events.
-*/
+     * Defines a handler that will monitor gamepad events
+     */
+    export class GamepadHandler implements IDisposable {
+
+        private _gamepadAPI: GamepadAPI;
+
+        // @ts-ignore
+        private _disposed: boolean;
+
+        /**
+        * Creates a new instance of the GamepadHandler object.
+        */
+        constructor() {
+            this._gamepadAPI = new GamepadAPI();
+            this._disposed = false;
+            this.Wire();
+        }
+
+        public OnConnecting(action: Function): void {
+            this._gamepadAPI.OnConnecting.Bind(action);
+        }
+
+        public OnDisconnecting(action: Function): void {
+            this._gamepadAPI.OnDisconnecting.Bind(action);
+        }
+
+        public OnButtonDown(button: GamepadButton, action: Function): void {
+            this._gamepadAPI.ButtonDownEvents[button].Bind(action);
+        }
+
+        public OnButtonUp(button: GamepadButton, action: Function): void {
+            this._gamepadAPI.ButtonUpEvents[button].Bind(action);
+        }
+
+        /**
+        * Disposes the GamepadHandler and unbinds all bound events.
+        */
+        public Dispose(): void {
+            if (!this._disposed) {
+                this._disposed = true;
+                this._gamepadAPI.Dispose();
+                this.Unwire();
+            }
+            else {
+                throw new Error("GamepadHandler cannot be disposed more than once");
+            }
+        }
+
+        private Wire(): void {
+            window.addEventListener("gamepadconnected", this._gamepadAPI.Connect.bind(this._gamepadAPI));
+            window.addEventListener("gamepaddisconnected", this._gamepadAPI.Disconnect.bind(this._gamepadAPI));
+        }
+
+        private Unwire(): void {
+            window.removeEventListener("gamepadconnected", this._gamepadAPI.Connect.bind(this._gamepadAPI));
+            window.removeEventListener("gamepaddisconnected", this._gamepadAPI.Disconnect.bind(this._gamepadAPI));
+        }
+    }
+
+    export enum GamepadButton {
+        A,
+        B,
+        X,
+        Y,
+        LB,
+        RB,
+        LT,
+        RT,
+        Back,
+        Start,
+        L,
+        R,
+        DPadUp,
+        DPadDown,
+        DPadLeft,
+        DPadRight,
+        LeftStickUp,
+        LeftStickDown,
+        LeftStickLeft,
+        LeftStickRight,
+        RightStickUp,
+        RightStickDown,
+        RightStickLeft,
+        RightStickRight,
+    }
+
+    export class GamepadAPI implements IDisposable {
+        public static AXES_THRESHOLD: number = 0.3;
+
+        // @ts-ignore
+        private _controller: Gamepad;
+        // @ts-ignore
+        private _buttons: Array<string>;
+        // @ts-ignore
+        private _buttonsCache: Array<string>;
+        // @ts-ignore
+        private _buttonsStatus: Array<string>;
+        // @ts-ignore
+        private _requestId: number;
+        // @ts-ignore
+        private _disposed: boolean;
+
+        // Handlers
+        public OnConnecting: EventHandler;
+        public OnDisconnecting: EventHandler;
+        public ButtonDownEvents: EventHandler[];
+        public ButtonUpEvents: EventHandler[];
+
+        constructor() {
+            this.OnConnecting = new EventHandler();
+            this.OnDisconnecting = new EventHandler();
+
+            this._buttons = [];
+            this._buttonsStatus = [];
+            this._buttonsCache = [];
+            this.ButtonDownEvents = [];
+            this.ButtonUpEvents = [];
+            for (var key in GamepadButton) {
+                this._buttons.push(GamepadButton[key]);
+                this.ButtonDownEvents.push(new EventHandler());
+                this.ButtonUpEvents.push(new EventHandler());
+            }
+        }
+
+        public get PressedButtons(): string[] {
+            return this._buttonsStatus;
+        }
+
+        public Connect(evt: Event): void {
+            var gamepadEvent = evt as GamepadEvent;
+            this._controller = gamepadEvent.gamepad;
+            this.OnConnecting.Trigger();
+            this._requestId = this.Loop();
+        }
+
+        public Disconnect(evt: Event): void {
+            delete this._controller;
+            this.OnDisconnecting.Trigger();
+            cancelAnimationFrame(this._requestId);
+        }
+
+        private Loop(): number {
+            this.FireEvents();
+            this.UpdateController();
+            this.Update();
+            
+            if (this.IsConnected()) {
+                return requestAnimationFrame(() => this.Loop());
+            }
+
+            return this._requestId;
+        }
+
+        private IsConnected(): boolean {
+            return this._controller && this._controller.connected;
+        }
+
+        private FireEvents(): void {
+            for (var i = 0; i < this._buttons.length; i++) {
+                var btn = this._buttons[i];
+                var isPressed = this._buttonsStatus.indexOf(btn) != -1;
+                var wasPressed = this._buttonsCache.indexOf(btn) != -1;
+                if (isPressed && !wasPressed) {
+                    this.ButtonDownEvents[this._buttons.indexOf(btn)].Trigger();
+                } else if (wasPressed && !isPressed) {
+                    this.ButtonUpEvents[this._buttons.indexOf(btn)].Trigger();
+                }
+            }
+        }
+
+        private UpdateController(): void {
+            var gamepads = navigator.getGamepads();
+            for (var i = 0; i < gamepads.length; i++)
+            {
+                if (gamepads[i] != null) {
+                    this._controller = gamepads[i] as Gamepad;
+                    break;
+                }
+            }
+        }
+
+        private Update(): string[] {
+            if (!this.IsConnected()) return [];
+
+            // clear the buttons cache
+            this._buttonsCache = [];
+            // move the buttons status from the previous frame to the cache
+            for(var k = 0; k < this._buttonsStatus.length; k++) {
+                this._buttonsCache[k] = this._buttonsStatus[k];
+            }
+            // clear the buttons status
+            this._buttonsStatus = [];
+            // get the gamepad object
+            var c = this._controller || {};
+
+            // loop through buttons and push the pressed ones to the array
+            var pressed = [];
+            if(c.buttons) {
+                for(var b = 0,t = c.buttons.length; b < t; b++) {
+                    if(c.buttons[b].pressed) {
+                        pressed.push(this._buttons[b]);
+                    }
+                }
+            }
+
+            // loop through axes and push their values to the array
+            var axes = new Array<number>();
+            if(c.axes) {
+                for(var a = 0,x = c.axes.length; a < x; a++) {
+                    axes.push(c.axes[a]);
+                }
+            }
+            
+            var leftHorizontal = axes[0];
+            var leftVertical = axes[1];
+            var rightHorizontal = axes[2];
+            var rightVertical = axes[3];
+
+            // Left stick
+            if (leftHorizontal < 0 && leftHorizontal < GamepadAPI.AXES_THRESHOLD * -1) {
+                pressed.push(this._buttons[GamepadButton.LeftStickLeft]);
+            } else if (leftHorizontal > 0 && leftHorizontal > GamepadAPI.AXES_THRESHOLD) {
+                pressed.push(this._buttons[GamepadButton.LeftStickRight]);
+            }
+            if (leftVertical < 0 && leftVertical < GamepadAPI.AXES_THRESHOLD * -1) {
+                pressed.push(this._buttons[GamepadButton.LeftStickUp]);
+            } else if (leftVertical > 0 && leftVertical > GamepadAPI.AXES_THRESHOLD) {
+                pressed.push(this._buttons[GamepadButton.LeftStickDown]);
+            }
+
+            // Right stick
+            if (rightHorizontal < 0 && rightHorizontal < GamepadAPI.AXES_THRESHOLD * -1) {
+                pressed.push(this._buttons[GamepadButton.RightStickLeft]);
+            } else if (rightHorizontal > 0 && rightHorizontal > GamepadAPI.AXES_THRESHOLD) {
+                pressed.push(this._buttons[GamepadButton.RightStickRight]);
+            }
+            if (rightVertical < 0 && rightVertical < GamepadAPI.AXES_THRESHOLD * -1) {
+                pressed.push(this._buttons[GamepadButton.RightStickUp]);
+            } else if (rightVertical > 0 && rightVertical > GamepadAPI.AXES_THRESHOLD) {
+                pressed.push(this._buttons[GamepadButton.RightStickDown]);
+            }
+
+            this._buttonsStatus = pressed;
+            return pressed;
+        }
+
+        /**
+        * Disposes the GamepadAPI and unbinds all bound events.
+        */
+        public Dispose(): void {
+            if (!this._disposed) {
+                this._disposed = true;
+                this.OnConnecting.Dispose();
+                this.OnDisconnecting.Dispose();
+                for (var key in this.ButtonDownEvents) {
+                    this.ButtonDownEvents[key].Dispose();
+                }
+                for (var key in this.ButtonUpEvents) {
+                    this.ButtonUpEvents[key].Dispose();
+                }
+            }
+            else {
+                throw new Error("GamepadHandler cannot be disposed more than once");
+            }
+        }
+    }
+
+    export class MouseButton {
+        public static Left: string = "Left";
+        public static Middle: string = "Middle";
+        public static Right: string = "Right";
+    }
+
+    /**
+    * Defines a handler that will monitor mouse events over a specified area and will execute appropriate functions based on the events.
+    */
     export class MouseHandler implements IDisposable {
         // Used to determine mouse buttons without using extra conditional statements, performance enhancer
         private static MouseButtonArray = [null, MouseButton.Left, MouseButton.Middle, MouseButton.Right];
 
-        // Active flags        
+        // Active flags
         // @ts-ignore
         private _leftIsDown: boolean;
         // @ts-ignore
