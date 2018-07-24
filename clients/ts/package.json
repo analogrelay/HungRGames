@@ -11,6 +11,7 @@
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/node": "^8.5.2",
+    "cpy-cli": "^2.0.0",
     "rimraf": "^2.6.2",
     "ts-loader": "^4.4.1",
     "tslint": "^5.9.1",

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace ShootR
 {
+    [Authorize]
     public class GameHub : Hub
     {
         private readonly Game _game;
@@ -19,11 +21,6 @@ namespace ShootR
 
         #region BotAPI
 
-        public double bot_Fire()
-        {
-            return fire();
-        }
-
         public void bot_readyForPayloads()
         {
             readyForPayloads();
@@ -32,6 +29,11 @@ namespace ShootR
         public object bot_initializeClient(string registrationID)
         {
             return initializeClient(registrationID);
+        }
+
+        public double bot_fire()
+        {
+            return fire();
         }
 
         public void bot_startAndStopMovement(string toStop, string toStart)
@@ -57,7 +59,7 @@ namespace ShootR
             }
         }
 
-        public void bot_registerMoveStart(string movement)
+        public void bot_startMovement(string movement)
         {
             if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
             {
@@ -78,7 +80,7 @@ namespace ShootR
             }
         }
 
-        public void bot_registerMoveStop(string movement)
+        public void bot_stopMovement(string movement)
         {
             if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
             {
@@ -99,7 +101,7 @@ namespace ShootR
             }
         }
 
-        public void bot_registerAbilityStart(string abilityName)
+        public void bot_startAbility(string abilityName)
         {
             if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
             {
@@ -119,7 +121,7 @@ namespace ShootR
             }
         }
 
-        public void bot_registerAbilityStop(string abilityName)
+        public void bot_stopAbility(string abilityName)
         {
             if (_game.UserHandler.UserExistsAndReady(Context.ConnectionId))
             {
@@ -141,7 +143,7 @@ namespace ShootR
 
         public void bot_boost()
         {
-            bot_registerAbilityStart("boost");
+            bot_startAbility("boost");
         }
 
         public async Task bot_sendMessage(string message)
