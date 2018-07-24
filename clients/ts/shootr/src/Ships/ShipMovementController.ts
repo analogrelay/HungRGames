@@ -20,6 +20,7 @@ export class ShipMovementController extends eg.MovementControllers.MovementContr
     private _acceleration: eg.Vector2d;        
     private _trackedMoveables: Array<eg.IMoveable>;
     private _interpolationManager: ShipInterpolationManager;
+    private _storedMovement: IMoving | undefined;
 
     constructor(movables: Array<eg.IMoveable>) {
         super(movables);
@@ -77,6 +78,7 @@ export class ShipMovementController extends eg.MovementControllers.MovementContr
     }
 
     public StopAllMovement(): void {
+        this._storedMovement = { ...this.Moving };
         for (var i = ShipMovementController.MOVING_DIRECTIONS.length - 1; i >= 0; i--) {
             // @ts-ignore
             this.Moving[ShipMovementController.MOVING_DIRECTIONS[i]] = false;
@@ -141,6 +143,10 @@ export class ShipMovementController extends eg.MovementControllers.MovementContr
 
     public Move(direction: string, startMoving: boolean): void {
         if (this.Controllable) {
+            if (typeof this._storedMovement !== "undefined") {
+                this.Moving = this._storedMovement;
+                this._storedMovement = undefined;
+            }
             // @ts-ignore
             if (typeof this.Moving[direction] !== "undefined") {
                 // @ts-ignore
@@ -152,6 +158,16 @@ export class ShipMovementController extends eg.MovementControllers.MovementContr
             }
             else {
                 throw new Error(direction + " is an unknown direction.");
+            }
+        }
+        else {
+            if (typeof this._storedMovement == "undefined") {
+                this._storedMovement = { ...this.Moving };
+            }
+            // @ts-ignore
+            if (typeof this._storedMovement[direction] !== "undefined") {
+                // @ts-ignore
+                this._storedMovement[direction] = startMoving;
             }
         }
     }

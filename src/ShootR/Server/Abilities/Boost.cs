@@ -33,7 +33,6 @@ namespace ShootR
 
         public override void Deactivate()
         {
-            (_movementController as ShipMovementController).Moving.Forward = false;
             _controllable.Value = true;
             ResetSpeed();
             base.Deactivate();

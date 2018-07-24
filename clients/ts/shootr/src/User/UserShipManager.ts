@@ -38,15 +38,17 @@ export class UserShipManager implements eg.IUpdateable {
         this._shipInputController = new ShipInputController(input.Keyboard, (direction: string, startMoving: boolean) => {
             var ship = this._shipManager.GetShip(this.ControlledShipId);
 
-            if (ship && ship.MovementController.Controllable && ship.LifeController.Alive) {
+            if (ship && ship.LifeController.Alive) {
                 if (startMoving) {
-                    if (direction === "Boost") {
+                    if (direction === "Boost" && ship.MovementController.Controllable) {
                         this.Invoke("registerAbilityStart", this.LatencyResolver.TryRequestPing(), this.NewAbilityCommand(direction, true));
 
                         ship.AbilityHandler.Activate(direction);
                         // Don't want to trigger a server command if we're already moving in the direction
-                    } else if (!ship.MovementController.IsMovingInDirection(direction)) {
-                        this.Invoke("registerMoveStart", this.LatencyResolver.TryRequestPing(), this.NewMovementCommand(direction, true));
+                    } else if (!ship.MovementController.IsMovingInDirection(direction) || !ship.MovementController.Controllable) {
+                        if (ship.MovementController.Controllable) {
+                            this.Invoke("registerMoveStart", this.LatencyResolver.TryRequestPing(), this.NewMovementCommand(direction, true));
+                        }
 
                         ship.MovementController.Move(direction, startMoving);
                     }
@@ -54,9 +56,8 @@ export class UserShipManager implements eg.IUpdateable {
                     // Don't want to trigger a server command if we're already moving in the direction
                     if (ship.MovementController.IsMovingInDirection(direction)) {
                         this.Invoke("registerMoveStop", this.LatencyResolver.TryRequestPing(), this.NewMovementCommand(direction, false));
-
-                        ship.MovementController.Move(direction, startMoving);
                     }
+                    ship.MovementController.Move(direction, startMoving);
                 }
             }
         }, (fireMethod: string) => {

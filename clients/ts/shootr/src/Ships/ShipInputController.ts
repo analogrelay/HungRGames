@@ -37,6 +37,7 @@ export class ShipInputController {
 
             if (this._monitorBoostTap && eg.TimeSpan.DateSpan(this._lastBoostTap, now).Milliseconds <= ShipInputController.DOUBLE_TAP_AFTER.Milliseconds) {
                 this._onMove("Boost", true);
+                this._lastBoostTap = new Date(0);
             } else { // no double tap
                 this._lastBoostTap = now;
             }

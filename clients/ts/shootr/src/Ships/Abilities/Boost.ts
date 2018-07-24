@@ -18,7 +18,7 @@ export class Boost extends MovementAbility {
 
     public Activate(): void {
         this._movementController.StopAllMovement();
-        this._movementController.Moving.Forward = true;            
+        this._movementController.Moving.Forward = true;
         this._movementController.Controllable = false;
 
         if (!this.Active) {
@@ -33,8 +33,8 @@ export class Boost extends MovementAbility {
         if (this.Active) {
             this.ResetSpeed();
             super.Deactivate();
-            this._movementController.Moving.Forward = false;
             this._movementController.Controllable = true;
+            this._movementController.Move("Backward", false); //hack
             this.OnStop.Trigger();
         }
     }
