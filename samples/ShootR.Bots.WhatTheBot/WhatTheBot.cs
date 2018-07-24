@@ -78,17 +78,17 @@ namespace ShootR.Bots.WhatTheBot
                     await TurnAround(context);
                     ExpectedRotationAngle = 90;
                 }
-                else if (rot == Rotation.Down && ship.Movement.Position.Y > 4300)
+                if (rot == Rotation.Down && ship.Movement.Position.Y > 4300)
                 {
                     await TurnAround(context);
                     ExpectedRotationAngle = 270;
                 }
-                else if (rot == Rotation.Left && ship.Movement.Position.X > 700)
+                if (rot == Rotation.Left && ship.Movement.Position.X > 700)
                 {
                     await TurnAround(context);
                     ExpectedRotationAngle = 0;
                 }
-                else if (rot == Rotation.Right && ship.Movement.Position.X > 4300)
+                if (rot == Rotation.Right && ship.Movement.Position.X > 4300)
                 {
                     await TurnAround(context);
                     ExpectedRotationAngle = 180;
