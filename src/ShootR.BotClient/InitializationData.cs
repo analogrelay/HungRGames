@@ -11,12 +11,13 @@ namespace ShootR.BotClient
 
         public ServerConfiguration Configuration { get; set; }
 
+        public int ShipID { get; set; }
+
+        public string ShipName { get; set; }
+
+        public bool ServerFull { get; set; }
+
         /*
-        Configuration: IConfigurationManager;
-        ServerFull: boolean;
-        CompressionContracts: any;
-        ShipID: number;
-        ShipName: string;
         UserInformation: IUserInformation;
          */
     }

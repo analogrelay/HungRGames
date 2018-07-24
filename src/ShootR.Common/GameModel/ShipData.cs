@@ -7,5 +7,8 @@
         public int Level { get; internal set; }
         public bool UserControlled { get; internal set; }
         public AbilityData Abilities { get; internal set; }
+
+        public int Width { get; internal set; }
+        public int Height { get; internal set; }
     }
 }

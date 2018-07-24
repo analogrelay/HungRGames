@@ -20,6 +20,7 @@ namespace ShootR.BotClient
         private readonly CookieContainer _cookies;
         private readonly Uri _serverUri;
         private bool _connected;
+        private InitializationData _initializationData;
         private PayloadDecompressor _payloadDecompressor;
         private SemaphoreSlim _payloadLock = new SemaphoreSlim(1, 1);
 
@@ -37,7 +38,7 @@ namespace ShootR.BotClient
             _botInformation = botUserInformation;
         }
 
-        public Func<PayloadData, Task> OnPayloadAsync { get; set; }
+        public Func<UpdateContext, Task> OnUpdateAsync { get; set; }
 
         public async Task ConnectAsync(CancellationToken cancellationToken = default)
         {
@@ -60,6 +61,13 @@ namespace ShootR.BotClient
             var decodedValue = WebUtility.UrlDecode(stateCookie.Value);
             var shootRState = JsonConvert.DeserializeObject<ShootRState>(decodedValue);
             var clientInitializationData = await _connection.InvokeAsync<InitializationData>("bot_initializeClient", shootRState.RegistrationID, cancellationToken);
+
+            if (clientInitializationData.ServerFull)
+            {
+                throw new Exception("Server Full.");
+            }
+
+            _initializationData = clientInitializationData;
             _payloadDecompressor = new PayloadDecompressor(clientInitializationData);
 
             await _connection.InvokeAsync("bot_readyForPayloads", cancellationToken);
@@ -123,8 +131,8 @@ namespace ShootR.BotClient
             {
                 var serverPayload = parameters;
                 var payload = _payloadDecompressor.DecompressPayload(serverPayload);
-
-                await (OnPayloadAsync?.Invoke(payload) ?? Task.CompletedTask);
+                var context = new UpdateContext(payload, _initializationData);
+                await (OnUpdateAsync?.Invoke(context) ?? Task.CompletedTask);
             }
             finally
             {

@@ -12,5 +12,11 @@ namespace ShootR.BotClient
 
         [JsonProperty("healthPackConfig")]
         public HealthPackConfiguration HealthPackConfiguration { get; set; }
+
+        [JsonProperty("bulletConfig")]
+        public BulletConfiguration BulletConfiguration { get; set; }
+
+        [JsonProperty("mapConfig")]
+        public MapConfiguration MapConfiguration { get; set; }
     }
 }

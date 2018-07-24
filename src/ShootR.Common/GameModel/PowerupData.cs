@@ -7,5 +7,11 @@
         public LifeData Life { get; internal set; }
         public MovementData Movement { get; internal set; }
         public bool Disposed { get; internal set; }
+
+        public int Width { get; internal set; }
+
+        public int Height { get; internal set; }
+
+        public int LifeSpan { get; internal set; }
     }
 }

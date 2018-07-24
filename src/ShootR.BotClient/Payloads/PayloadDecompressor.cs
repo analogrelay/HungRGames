@@ -91,6 +91,8 @@ namespace ShootR.BotClient.Payloads
             ship.MaxLife = maxLife;
             ship.Level = level;
             ship.Abilities = abilityData;
+            ship.Width = _initializationData.Configuration.ShipConfiguration.WIDTH;
+            ship.Height = _initializationData.Configuration.ShipConfiguration.HEIGHT;
         }
 
         private void DecompressIntoBullet(JArray data, BulletData bullet)
@@ -99,6 +101,8 @@ namespace ShootR.BotClient.Payloads
             var damageDealt = ExtractValue<int>(data, _bulletContract.DamageDealt);
 
             bullet.DamangeDealt = damageDealt;
+            bullet.Width = _initializationData.Configuration.BulletConfiguration.WIDTH;
+            bullet.Height = _initializationData.Configuration.BulletConfiguration.HEIGHT;
         }
 
         private void DecompressIntoPowerup(JArray data, PowerupData powerup)
@@ -124,6 +128,13 @@ namespace ShootR.BotClient.Payloads
             powerup.Type = powerupType;
             powerup.Movement = movementData;
             powerup.Life = lifeData;
+
+            if (powerupType == PowerupType.HealthPack)
+            {
+                powerup.Width = _initializationData.Configuration.HealthPackConfiguration.WIDTH;
+                powerup.Height = _initializationData.Configuration.HealthPackConfiguration.HEIGHT;
+                powerup.Height = _initializationData.Configuration.HealthPackConfiguration.LIFE_SPAN;
+            }
         }
 
         public PayloadData DecompressPayload(JArray data)

@@ -39,8 +39,9 @@ namespace ShootR.BotClient.Sample
             await botClient.StartMovementAsync(Common.GameModel.Movement.Forward);
             var payloadCount = 0;
 
-            botClient.OnPayloadAsync += async (PayloadData payload) =>
+            botClient.OnUpdateAsync += async (UpdateContext context) =>
             {
+                var payload = context.Payload;
                 payloadCount += 1;
 
                 // Move back to the start position
