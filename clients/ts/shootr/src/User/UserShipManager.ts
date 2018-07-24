@@ -35,7 +35,7 @@ export class UserShipManager implements eg.IUpdateable {
             }
         });
 
-        this._shipInputController = new ShipInputController(input.Keyboard, (direction: string, startMoving: boolean) => {
+        this._shipInputController = new ShipInputController(_serverAdapter, input.Keyboard, input.Gamepad, (direction: string, startMoving: boolean) => {
             var ship = this._shipManager.GetShip(this.ControlledShipId);
 
             if (ship && ship.LifeController.Alive) {
