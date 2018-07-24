@@ -1,0 +1,10 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <EnableApiCheck>false</EnableApiCheck>
+    <PackageTags>shootr</PackageTags>
+  </PropertyGroup>
+
+</Project>
