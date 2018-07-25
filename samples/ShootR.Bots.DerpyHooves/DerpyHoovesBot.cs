@@ -38,7 +38,7 @@ namespace ShootR.Bots.DerpyHooves
             _shootingPhase = new ShootingPhase(this);
         }
 
-        internal Task SayAsync(string message)
+        public Task SayAsync(string message)
         {
             Console.WriteLine(message);
             return Client.SendMessage(message, CancellationToken);
@@ -133,39 +133,41 @@ namespace ShootR.Bots.DerpyHooves
         private class SpinningPhase : IPhase
         {
             private readonly DerpyHoovesBot _bot;
+            private readonly AttitudeController _attitudeController;
 
             public SpinningPhase(DerpyHoovesBot bot)
             {
+                _attitudeController = new AttitudeController(bot);
                 _bot = bot;
             }
 
             public async Task StartAsync(UpdateContext context)
             {
-                // Set the target vector
-                var targetVector = RotationHelper.RotateVector(Vector2.North, -(Math.PI / 2));
-
-                // Calculate the target rotation
-
+                // Determine the target rotation (negative, because we're turning left
+                var targetVector = RotationHelper.GetRotationVector((5 * Math.PI) / 4);
+                _attitudeController.TargetRotation = RotationHelper.GetAngle(context.YourShip.Movement.Facing, targetVector);
 
                 await _bot.SayAsync("INITIATING SPINNING ROUTINES.");
-
-                // Start rotating
-                await _bot.Client.StartMovementAsync(Movement.RotatingLeft);
             }
 
             public async Task StopAsync(UpdateContext context)
             {
                 await _bot.SayAsync("DISENGAGING SPINNING PROTOCOL.");
+
                 await _bot.Client.StopMovementAsync(Movement.RotatingLeft);
+                await _bot.Client.StopMovementAsync(Movement.RotatingRight);
             }
 
-            public Task TickAsync(UpdateContext context, GameTime gameTime)
+            public async Task TickAsync(UpdateContext context, GameTime gameTime)
             {
-                // Check if we're facing the right direction yet
-                
+                await _attitudeController.UpdateAsync(context);
 
-                // Nothing to do for this phase
-                return Task.CompletedTask;
+                Console.WriteLine($"Rotation: {context.YourShip.Movement.CorrectedRotation}");
+
+                if (_attitudeController.HasArrived)
+                {
+                    await _bot.SayAsync("ARRIVED AT DESIRED ATTITUDE.");
+                }
             }
         }
     }
