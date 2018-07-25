@@ -96,13 +96,33 @@ namespace ShootR.BotClient
             await _connection.SendAsync("bot_stopFire", cancellationToken);
         }
 
-        public Task StartMovingForwardAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.Forward, cancellationToken);
+        public Task StartMovingForwardAsync(CancellationToken cancellationToken = default)
+        {
+            var t1 = StopMovementAsync(Movement.Backward, cancellationToken);
+            var t2 = StartMovementAsync(Movement.Forward, cancellationToken);
+            return Task.WhenAll(t1, t2);
+        }
 
-        public Task StartMovingBackwardAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.Backward, cancellationToken);
+        public Task StartMovingBackwardAsync(CancellationToken cancellationToken = default)
+        {
+            var t1 = StopMovementAsync(Movement.Forward, cancellationToken);
+            var t2 = StartMovementAsync(Movement.Backward, cancellationToken);
+            return Task.WhenAll(t1, t2);
+        }
 
-        public Task StartRotatingLeftAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.RotatingLeft, cancellationToken);
+        public Task StartRotatingLeftAsync(CancellationToken cancellationToken = default)
+        {
+            var t1 = StopMovementAsync(Movement.RotatingRight, cancellationToken);
+            var t2 = StartMovementAsync(Movement.RotatingLeft, cancellationToken);
+            return Task.WhenAll(t1, t2);
+        }
 
-        public Task StartRotatingRightAsync(CancellationToken cancellationToken = default) => StartMovementAsync(Movement.RotatingRight, cancellationToken);
+        public Task StartRotatingRightAsync(CancellationToken cancellationToken = default)
+        {
+            var t1 = StopMovementAsync(Movement.RotatingLeft, cancellationToken);
+            var t2 = StartMovementAsync(Movement.RotatingRight, cancellationToken);
+            return Task.WhenAll(t1, t2);
+        }
 
         // Movement will not stop if the ship is uncontrollable.
         public async Task StopMoving(CancellationToken cancellationToken = default)
